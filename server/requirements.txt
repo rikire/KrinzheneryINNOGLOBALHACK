@@ -1,0 +1,10 @@
+PyYAML
+fastapi
+pydantic
+typing
+asyncio
+httpx
+datetime
+motor
+uvicorn
+pymongo
