@@ -1,8 +1,9 @@
 from fastapi import APIRouter
-from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command
+from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command, SearchQuery
 
 from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat
 from app.services.user_service import fetch_user_info
+from app.services.search_service import fetch_search
 
 import yaml
 
@@ -119,10 +120,12 @@ async def post_command(cred: AccountRegister, command: Command):
 async def post_command_del(cred: AccountRegister, command: Command):
     return await post_command_del(cred, command)
 
-@router.get(
-    "/search/{querry}",
+@router.post(
+    "/search",
     response_model=SearchResult,
     summary="Поиск пользователей по компетенциям",
-    description="Возвращает список UserInfo.")
-async def get_search(querry: str):
-    return await fetch_search(querry)
+    description="Возвращает список UserInfo."
+)
+async def get_search(search_query: SearchQuery):
+    query = search_query.query
+    return await fetch_search(query, token=get_token())

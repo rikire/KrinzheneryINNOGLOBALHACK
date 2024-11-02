@@ -123,5 +123,10 @@ class AccountInfo(BaseModel):
 class Summary(BaseModel):
     summary: str = Field(..., description="Описание разработчика")
 
+
+class SearchQuery(BaseModel):
+    query: str = Field(..., description="Строка запроса для поиска пользователей по компетенциям.")
+
+
 class SearchResult(BaseModel):
     developers: List[UserInfo] = Field(..., description="Массив информации о пользователях")

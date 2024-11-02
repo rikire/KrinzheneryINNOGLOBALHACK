@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 import httpx
 from app.storage.crud.users import read_user, create_user
 
-async def fetch_user_info(username : str, token: str):
+async def fetch_user_info(username : str, token: str) -> UserInfo:
     account_info = await read_user(username)
     if account_info is not None:
         return account_info
