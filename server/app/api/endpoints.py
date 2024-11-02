@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command
 
-from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat
+from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat
 from app.services.user_service import fetch_user_info
 
 import yaml

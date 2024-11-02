@@ -25,7 +25,8 @@ async def read_repo_stat(username: str, repo_name: str) -> RepoStat:
 
 # Прочитать пользователя
 async def read_repo_stat_by_username(username: str) -> List[RepoStat]:
-    repo_stats = await repo_stat_collection.find({"username": username})
+    cursor = repo_stat_collection.find({"username": username})
+    repo_stats = await cursor.to_list(length=None)
     return [RepoStat(**repo_stat) for repo_stat in repo_stats]
 
 # Прочитать пользователя

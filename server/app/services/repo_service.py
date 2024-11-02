@@ -1,5 +1,6 @@
-from app.storage.crud.repo_stats import read_repo_stat, repo_stat_exists, create_repo_stat
+from app.storage.crud.repo_stats import read_repo_stat_by_username, read_repo_stat, repo_stat_exists, create_repo_stat
 from app.models.models import RepoStat
+from app.schemas.schema import UserGlobalStat
 import asyncio
 import httpx
 from typing import List, Dict
@@ -41,6 +42,61 @@ async def fetch_actualize_stat(username: str, owner: str, repo: str, token: str)
     repo_stat = await get_github_repo_stat(username, owner, repo, token)
     await create_repo_stat(repo_stat)
     return repo_stat
+    
+async def fetch_global_stat(username: str, token: str) -> UserGlobalStat:
+    repos = await read_repo_stat_by_username(username)
+    
+    global_stat = UserGlobalStat(
+        username=username,
+        public_repos=0,
+        contributed_repos=0,
+        commits_total=0,
+        commits_per_day=0,
+        commits_per_week=0,
+        commits_per_year=0,
+        average_commit_size=0,
+        languages=[],
+        competencies=[],
+        using_github_features=[],
+        stack=[],
+        score=[],
+        prep_repos=[]
+    )
+    
+    languages=set()
+    competencies=set()
+    using_github_features=set()
+    stack=set()
+    score=set()
+    
+    for repo in repos:
+        global_stat.public_repos += 1
+        if username.lower() in repo.repo_name.lower():
+            global_stat.public_repos += 1
+        global_stat.commits_total += repo.commits_total
+        global_stat.commits_per_day += repo.commits_per_day
+        global_stat.commits_per_week += repo.commits_per_week
+        global_stat.commits_per_year += repo.commits_per_year
+        global_stat.average_commit_size += repo.average_commit_size
+        languages.update(repo.languages)
+        competencies.update(repo.competencies)
+        using_github_features.update(repo.using_github_features)
+        stack.update(repo.stack)
+        score.update(repo.score)
+        global_stat.prep_repos.append(repo.repo_name)
+
+    global_stat.languages = list(languages)
+    global_stat.competencies = list(competencies)
+    global_stat.using_github_features = list(using_github_features)
+    global_stat.stack = list(stack)
+    global_stat.score = list(score)
+    
+    global_stat.commits_per_day /= len(repos)
+    global_stat.commits_per_week /= len(repos)
+    global_stat.commits_per_year /= len(repos)
+    global_stat.average_commit_size /= len(repos)
+    
+    return global_stat
     
 async def get_github_repo_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
     """
