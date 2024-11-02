@@ -12,8 +12,8 @@ router = APIRouter()
 def get_token():
     with open("config.yaml", "r") as file:
         config = yaml.safe_load(file)
-        return config.get("token")
-        
+        token = config.get("github_token")
+        return token
 
 @router.get(
     "/stat/{username}/{owner}/{repo}",
