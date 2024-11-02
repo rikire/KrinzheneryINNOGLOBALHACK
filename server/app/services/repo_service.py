@@ -25,6 +25,23 @@ async def fetch_repo_stat(username: str, owner: str, repo: str, token: str) -> R
     await create_repo_stat(repo_stat)
     return repo_stat
     
+async def fetch_actualize_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
+    """
+    Retrieve a repository's statistics from the GitHub API.
+
+    Args:
+        username (str): The username of the repository owner.
+        owner (str): The owner of the repository.
+        repo (str): The name of the repository.
+        token (str): The GitHub API access token.
+
+    Returns:
+        RepoStat: The repository's statistics.
+    """
+    repo_stat = await get_github_repo_stat(username, owner, repo, token)
+    await create_repo_stat(repo_stat)
+    return repo_stat
+    
 async def get_github_repo_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
     """
     Retrieve a repository's statistics from the GitHub API.

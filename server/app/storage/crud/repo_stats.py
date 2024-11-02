@@ -10,10 +10,13 @@ async def repo_stat_exists(username: str, repo_name: str) -> bool:
 
 # Создать пользователя
 async def create_repo_stat(repo_stat_data: RepoStat) -> RepoStat:
-    result = await repo_stat_collection.insert_one(repo_stat_data.model_dump())
-    if result.inserted_id:
-        return repo_stat_data
-    return None
+    if await repo_stat_exists(repo_stat_data.username, repo_stat_data.repo_name):
+        return await update_repo_stat(repo_stat_data)
+    else:
+        result = await repo_stat_collection.insert_one(repo_stat_data.model_dump())
+        if result.inserted_id:
+            return repo_stat_data
+        return None
 
 # Прочитать пользователя
 async def read_repo_stat(username: str, repo_name: str) -> RepoStat:
@@ -32,10 +35,18 @@ async def read_repo_stat_by_repo_name(repo_name: str) -> List[RepoStat]:
 
 
 # Обновить пользователя
-async def update_repo_stat(user_data: RepoStat) -> RepoStat:
-    res = await repo_stat_collection.update_one({"_id": user_data.id}, {"$set": user_data.model_dump_json()})
-    if res.modified_count:
-        return user_data
+async def update_repo_stat(repo_stat_data: RepoStat) -> RepoStat:
+    update_result = await repo_stat_collection.update_one(
+        {
+            "username": repo_stat_data.username,
+            "repo_name": repo_stat_data.repo_name
+        },
+        {"$set": repo_stat_data.model_dump()}
+    )
+
+    if update_result.modified_count:
+        return repo_stat_data
+
     return None
 
 # Удалить пользователя
