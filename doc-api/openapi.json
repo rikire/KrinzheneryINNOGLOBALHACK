@@ -1,435 +1,61 @@
 {
-    "openapi": "3.1.0",
-    "info": {
-      "title": "FastAPI",
-      "version": "0.1.0"
-    },
-    "paths": {
-      "/stat/{username}/{owner}/{repo}": {
-        "get": {
-          "summary": "Получение статистики репозитория",
-          "description": "Возвращает статистику по конкретному репозиторию пользователя, включая языки, стек технологий и метрики коммитов.",
-          "operationId": "get_repo_stat_stat__username___owner___repo__get",
-          "parameters": [
-            {
-              "name": "username",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Username"
-              }
-            },
-            {
-              "name": "owner",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Owner"
-              }
-            },
-            {
-              "name": "repo",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Repo"
-              }
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/stat/{username}/{owner}/{repo}": {
+      "get": {
+        "summary": "Получение статистики репозитория",
+        "description": "Возвращает статистику по конкретному репозиторию пользователя, включая языки, стек технологий и метрики коммитов.",
+        "operationId": "get_repo_stat_stat__username___owner___repo__get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Username"
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserRepoStat"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
+          },
+          {
+            "name": "owner",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Owner"
+            }
+          },
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
             }
           }
-        }
-      },
-      "/actualize_stat/{username}/{owner}/{repo}": {
-        "get": {
-          "summary": "Актуализация статистики репозитория",
-          "description": "Обновляет информацию о статистике репозитория в бд.",
-          "operationId": "get_actualize_stat_actualize_stat__username___owner___repo__get",
-          "parameters": [
-            {
-              "name": "username",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Username"
-              }
-            },
-            {
-              "name": "owner",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Owner"
-              }
-            },
-            {
-              "name": "repo",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Repo"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserRepoStat"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/global_stat/{username}": {
-        "get": {
-          "summary": "Возвращает глобальную статистику о пользователе",
-          "description": "Сканирует все репозитории человека и возвращает глобальную статистику.",
-          "operationId": "get_global_stat_global_stat__username__get",
-          "parameters": [
-            {
-              "name": "username",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Username"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserGlobalStat"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/user_info/{username}": {
-        "get": {
-          "summary": "Возвращает информацию о пользователе",
-          "description": "Возвращает информацию о профиле пользователя на гитхаб.",
-          "operationId": "get_user_info_user_info__username__get",
-          "parameters": [
-            {
-              "name": "username",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Username"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserInfo"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/summary/{username}": {
-        "get": {
-          "summary": "Возвращает саммари о пользователе",
-          "description": "Возвращает саммари о пользователе, сгенерированное ламой.",
-          "operationId": "get_summary_summary__username__get",
-          "parameters": [
-            {
-              "name": "username",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Username"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Summary"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/register": {
-        "post": {
-          "summary": "Регестрирует пользователя в системе",
-          "description": "Принимает логин и пароль.",
-          "operationId": "post_create_acc_register_post",
-          "requestBody": {
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AccountRegister"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/AccountInfo"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
+                  "$ref": "#/components/schemas/UserRepoStat"
                 }
               }
             }
-          }
-        }
-      },
-      "/login": {
-        "post": {
-          "summary": "Авторизирует пользователя в системе",
-          "description": "Принимает логин и пароль.",
-          "operationId": "post_login_acc_login_post",
-          "requestBody": {
+          },
+          "422": {
+            "description": "Validation Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AccountRegister"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/AccountInfo"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/command": {
-        "post": {
-          "summary": "CRUD для комманд.",
-          "description": "Принимает комманду.",
-          "operationId": "post_command_command_post",
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Command"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-  
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/command/delete": {
-        "post": {
-          "summary": "Post Command Del",
-          "operationId": "post_command_del_command_delete_post",
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Command"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-  
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/search/{querry}": {
-        "get": {
-          "summary": "Поиск пользователей по компетенциям",
-          "description": "Возвращает список UserInfo.",
-          "operationId": "get_search_search__querry__get",
-          "parameters": [
-            {
-              "name": "querry",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "title": "Querry"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/SearchResult"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -437,623 +63,1030 @@
         }
       }
     },
-    "components": {
-      "schemas": {
-        "AccountInfo": {
-          "properties": {
-            "login": {
+    "/actualize_stat/{username}/{owner}/{repo}": {
+      "get": {
+        "summary": "Актуализация статистики репозитория",
+        "description": "Обновляет информацию о статистике репозитория в бд.",
+        "operationId": "get_actualize_stat_actualize_stat__username___owner___repo__get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "string",
-              "title": "Login",
-              "description": "Логин аккаунта"
-            },
-            "command_list": {
-              "items": {
-                "$ref": "#/components/schemas/Command"
-              },
-              "type": "array",
-              "title": "Command List",
-              "description": "Список команд"
-            },
-            "favorites": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Favorites",
-              "description": "Любимые разработчики"
+              "title": "Username"
             }
           },
-          "type": "object",
-          "required": [
-            "login",
-            "command_list",
-            "favorites"
-          ],
-          "title": "AccountInfo"
-        },
-        "AccountRegister": {
-          "properties": {
-            "login": {
+          {
+            "name": "owner",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "string",
-              "title": "Login",
-              "description": "Логин аккаунта"
-            },
-            "password": {
+              "title": "Owner"
+            }
+          },
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "string",
-              "title": "Password",
-              "description": "Пароль аккаунта"
+              "title": "Repo"
             }
-          },
-          "type": "object",
-          "required": [
-            "login",
-            "password"
-          ],
-          "title": "AccountRegister"
-        },
-        "Command": {
-          "properties": {
-            "command_name": {
-              "type": "string",
-              "title": "Command Name",
-              "description": "Название команды"
-            },
-            "participants": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Participants",
-              "description": "Участники команды"
-            }
-          },
-          "type": "object",
-          "required": [
-            "command_name",
-            "participants"
-          ],
-          "title": "Command"
-        },
-        "HTTPValidationError": {
-          "properties": {
-            "detail": {
-              "items": {
-                "$ref": "#/components/schemas/ValidationError"
-              },
-              "type": "array",
-              "title": "Detail"
-            }
-          },
-          "type": "object",
-          "title": "HTTPValidationError"
-        },
-        "SearchResult": {
-          "properties": {
-            "developers": {
-              "items": {
-                "$ref": "#/components/schemas/UserInfo"
-              },
-              "type": "array",
-              "title": "Developers",
-              "description": "Массив информации о пользователях"
-            }
-          },
-          "type": "object",
-          "required": [
-            "developers"
-          ],
-          "title": "SearchResult"
-        },
-        "Summary": {
-          "properties": {
-            "summary": {
-              "type": "string",
-              "title": "Summary",
-              "description": "Описание разработчика"
-            }
-          },
-          "type": "object",
-          "required": [
-            "summary"
-          ],
-          "title": "Summary"
-        },
-        "UserGlobalStat": {
-          "properties": {
-            "username": {
-              "type": "string",
-              "title": "Username",
-              "description": "Имя пользователя на GitHub"
-            },
-            "public_repos": {
-              "type": "integer",
-              "title": "Public Repos",
-              "description": "Количество публичных репозиториев"
-            },
-            "contributed_repos": {
-              "type": "integer",
-              "title": "Contributed Repos",
-              "description": "Количество репозиториев, к которым пользователь внес вклад"
-            },
-            "commits_total": {
-              "type": "integer",
-              "title": "Commits Total",
-              "description": "Общее количество коммитов"
-            },
-            "commits_per_day": {
-              "type": "number",
-              "title": "Commits Per Day",
-              "description": "Среднее количество коммитов в день"
-            },
-            "commits_per_week": {
-              "type": "number",
-              "title": "Commits Per Week",
-              "description": "Среднее количество коммитов в неделю"
-            },
-            "commits_per_year": {
-              "type": "number",
-              "title": "Commits Per Year",
-              "description": "Среднее количество коммитов в год"
-            },
-            "average_commit_size": {
-              "type": "number",
-              "title": "Average Commit Size",
-              "description": "Средний размер коммита"
-            },
-            "languages": {
-              "items": {
-                "additionalProperties": {
-                  "type": "integer"
-                },
-                "type": "object"
-              },
-              "type": "array",
-              "title": "Languages",
-              "description": "Используемые языки программирования и количество строчек кода на этом языке"
-            },
-            "competencies": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Competencies",
-              "description": "Компетенции, разработчика (направаления разработки)"
-            },
-            "using_github_features": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Using Github Features",
-              "description": "Используемые функции GitHub, такие как 'issues' или 'actions'"
-            },
-            "stack": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Stack",
-              "description": "Технологический стек, используемый в проекте (подключаемые либы)"
-            },
-            "score": {
-              "items": {
-                "additionalProperties": {
-                  "type": "integer"
-                },
-                "type": "object"
-              },
-              "type": "array",
-              "title": "Score",
-              "description": "Оценки по стеку технологий (от 0 до 10)"
-            },
-            "prep_repos": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Prep Repos",
-              "description": "Список репозиториев по которым мы имеем статистику в БД"
-            }
-          },
-          "type": "object",
-          "required": [
-            "username",
-            "public_repos",
-            "contributed_repos",
-            "commits_total",
-            "commits_per_day",
-            "commits_per_week",
-            "commits_per_year",
-            "average_commit_size",
-            "languages",
-            "competencies",
-            "using_github_features",
-            "stack",
-            "score",
-            "prep_repos"
-          ],
-          "title": "UserGlobalStat",
-          "example": {
-            "average_commit_size": 120,
-            "commits_per_day": 2,
-            "commits_per_week": 14,
-            "commits_per_year": 730,
-            "commits_total": 1000,
-            "competencies": [
-              "backend_development",
-              "devops"
-            ],
-            "contributed_repos": 20,
-            "languages": [
-              {
-                "Python": 75
-              },
-              {
-                "JavaScript": 25
-              }
-            ],
-            "public_repos": 50,
-            "repositories": [
-              "john/repo1",
-              "mark/repo2"
-            ],
-            "score": [
-              {
-                "Django": 5
-              },
-              {
-                "Docker": 10
-              }
-            ],
-            "stack": [
-              "Django",
-              "Docker"
-            ],
-            "username": "john_doe",
-            "using_github_features": [
-              "pull_requests",
-              "wiki"
-            ]
           }
-        },
-        "UserInfo": {
-          "properties": {
-            "username": {
-              "type": "string",
-              "title": "Username",
-              "description": "Имя пользователя на GitHub"
-            },
-            "name": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRepoStat"
                 }
-              ],
-              "title": "Name",
-              "description": "Полное имя пользователя"
-            },
-            "email": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Email",
-              "description": "Электронная почта пользователя"
-            },
-            "team_projects": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Team Projects",
-              "description": "Количество проектов в команде"
-            },
-            "solo_projects": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Solo Projects",
-              "description": "Количество личных проектов"
-            },
-            "solo_gist": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Solo Gist",
-              "description": "Количество публичных гистов"
-            },
-            "account_age": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Account Age",
-              "description": "Возраст аккаунта"
-            },
-            "avatar_url": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Avatar Url",
-              "description": "Ссылка на аватар пользователя"
-            },
-            "html_url": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Html Url",
-              "description": "Ссылка на профиль пользователя"
-            },
-            "followers": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Followers",
-              "description": "Количество подписчиков"
-            },
-            "following": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Following",
-              "description": "Количество отслеживаемых пользователей"
-            },
-            "repos": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Repos"
-            }
-          },
-          "type": "object",
-          "required": [
-            "username",
-            "repos"
-          ],
-          "title": "UserInfo",
-          "example": {
-            "account_age": 3,
-            "avatar_url": "https://example.com/avatar.jpg",
-            "email": "john@example.com",
-            "followers": 100,
-            "following": 50,
-            "html_url": "https://github.com/john_doe",
-            "name": "John Doe",
-            "repos:": [
-              "jack/repo1, sparrow/repo2"
-            ],
-            "solo_gist": 3,
-            "solo_projects": 10,
-            "team_projects": 5,
-            "username": "john_doe"
-          }
-        },
-        "UserRepoStat": {
-          "properties": {
-            "username": {
-              "type": "string",
-              "title": "Username",
-              "description": "Имя пользователя на GitHub"
-            },
-            "repo_name": {
-              "type": "string",
-              "title": "Repo Name",
-              "description": "Название репозитория"
-            },
-            "repo_html_url": {
-              "type": "string",
-              "title": "Repo Html Url",
-              "description": "URL-адрес репозитория"
-            },
-            "languages": {
-              "items": {
-                "additionalProperties": {
-                  "type": "integer"
-                },
-                "type": "object"
-              },
-              "type": "array",
-              "title": "Languages",
-              "description": "Используемые языки программирования и количество строчек кода на этом языке"
-            },
-            "competencies": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Competencies",
-              "description": "Компетенции, разработчика (направаления разработки)"
-            },
-            "using_github_features": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Using Github Features",
-              "description": "Используемые функции GitHub, такие как 'issues' или 'actions'"
-            },
-            "stack": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array",
-              "title": "Stack",
-              "description": "Технологический стек, используемый в проекте (подключаемые либы)"
-            },
-            "score": {
-              "items": {
-                "additionalProperties": {
-                  "type": "integer"
-                },
-                "type": "object"
-              },
-              "type": "array",
-              "title": "Score",
-              "description": "Оценки по стеку технологий (от 0 до 10)"
-            },
-            "commits_total": {
-              "type": "integer",
-              "title": "Commits Total",
-              "description": "Общее количество коммитов в репозитории"
-            },
-            "commits_per_day": {
-              "type": "number",
-              "title": "Commits Per Day",
-              "description": "Среднее количество коммитов в день"
-            },
-            "commits_per_week": {
-              "type": "number",
-              "title": "Commits Per Week",
-              "description": "Среднее количество коммитов в неделю"
-            },
-            "commits_per_year": {
-              "type": "number",
-              "title": "Commits Per Year",
-              "description": "Среднее количество коммитов в год"
-            },
-            "average_commit_size": {
-              "type": "number",
-              "title": "Average Commit Size",
-              "description": "Средний размер коммита"
-            }
-          },
-          "type": "object",
-          "required": [
-            "username",
-            "repo_name",
-            "repo_html_url",
-            "languages",
-            "competencies",
-            "using_github_features",
-            "stack",
-            "score",
-            "commits_total",
-            "commits_per_day",
-            "commits_per_week",
-            "commits_per_year",
-            "average_commit_size"
-          ],
-          "title": "UserRepoStat",
-          "example": {
-            "average_commit_size": 100,
-            "commits_per_day": 1,
-            "commits_per_week": 7,
-            "commits_per_year": 365,
-            "commits_total": 150,
-            "competencies": [
-              "data_analysis",
-              "backend",
-              "frontend",
-              "devops"
-            ],
-            "languages": [
-              {
-                "Python": 900
-              },
-              {
-                "HTML": 1000
               }
-            ],
-            "repo_html_url": "https://github.com/john_doe/sample_repo",
-            "repo_name": "john_doe/sample_repo",
-            "score": [
-              {
-                "FastAPI": 4
-              },
-              {
-                "Pandas": 10
-              }
-            ],
-            "stack": [
-              "FastAPI",
-              "Pandas"
-            ],
-            "username": "john_doe",
-            "using_github_features": [
-              "actions",
-              "issues"
-            ]
-          }
-        },
-        "ValidationError": {
-          "properties": {
-            "loc": {
-              "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "integer"
-                  }
-                ]
-              },
-              "type": "array",
-              "title": "Location"
-            },
-            "msg": {
-              "type": "string",
-              "title": "Message"
-            },
-            "type": {
-              "type": "string",
-              "title": "Error Type"
             }
           },
-          "type": "object",
-          "required": [
-            "loc",
-            "msg",
-            "type"
-          ],
-          "title": "ValidationError"
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/global_stat/{username}": {
+      "get": {
+        "summary": "Возвращает глобальную статистику о пользователе",
+        "description": "Сканирует все репозитории человека и возвращает глобальную статистику.",
+        "operationId": "get_global_stat_global_stat__username__get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Username"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserGlobalStat"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user_info/{username}": {
+      "get": {
+        "summary": "Возвращает информацию о пользователе",
+        "description": "Возвращает информацию о профиле пользователя на гитхаб.",
+        "operationId": "get_user_info_user_info__username__get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Username"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/summary/{username}": {
+      "get": {
+        "summary": "Возвращает саммари о пользователе",
+        "description": "Возвращает саммари о пользователе, сгенерированное ламой.",
+        "operationId": "get_summary_summary__username__get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Username"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Summary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "Регестрирует пользователя в системе",
+        "description": "Принимает логин и пароль.",
+        "operationId": "post_create_acc_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Авторизирует пользователя в системе",
+        "description": "Принимает логин и пароль.",
+        "operationId": "post_login_acc_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/command": {
+      "post": {
+        "summary": "CRUD для комманд.",
+        "description": "Принимает комманду.",
+        "operationId": "post_command_command_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_post_command_command_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/command/delete": {
+      "post": {
+        "summary": "Post Command Del",
+        "operationId": "post_command_del_command_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_post_command_del_command_delete_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search/{querry}": {
+      "get": {
+        "summary": "Поиск пользователей по компетенциям",
+        "description": "Возвращает список UserInfo.",
+        "operationId": "get_search_search__querry__get",
+        "parameters": [
+          {
+            "name": "querry",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Querry"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "AccountInfo": {
+        "properties": {
+          "login": {
+            "type": "string",
+            "title": "Login",
+            "description": "Логин аккаунта"
+          },
+          "command_list": {
+            "items": {
+              "$ref": "#/components/schemas/Command"
+            },
+            "type": "array",
+            "title": "Command List",
+            "description": "Список команд"
+          },
+          "favorites": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Favorites",
+            "description": "Любимые разработчики"
+          }
+        },
+        "type": "object",
+        "required": [
+          "login",
+          "command_list",
+          "favorites"
+        ],
+        "title": "AccountInfo"
+      },
+      "AccountRegister": {
+        "properties": {
+          "login": {
+            "type": "string",
+            "title": "Login",
+            "description": "Логин аккаунта"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "description": "Пароль аккаунта"
+          }
+        },
+        "type": "object",
+        "required": [
+          "login",
+          "password"
+        ],
+        "title": "AccountRegister"
+      },
+      "Body_post_command_command_post": {
+        "properties": {
+          "cred": {
+            "$ref": "#/components/schemas/AccountRegister"
+          },
+          "command": {
+            "$ref": "#/components/schemas/Command"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cred",
+          "command"
+        ],
+        "title": "Body_post_command_command_post"
+      },
+      "Body_post_command_del_command_delete_post": {
+        "properties": {
+          "cred": {
+            "$ref": "#/components/schemas/AccountRegister"
+          },
+          "command": {
+            "$ref": "#/components/schemas/Command"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cred",
+          "command"
+        ],
+        "title": "Body_post_command_del_command_delete_post"
+      },
+      "Command": {
+        "properties": {
+          "command_name": {
+            "type": "string",
+            "title": "Command Name",
+            "description": "Название команды"
+          },
+          "participants": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Participants",
+            "description": "Участники команды"
+          }
+        },
+        "type": "object",
+        "required": [
+          "command_name",
+          "participants"
+        ],
+        "title": "Command"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "SearchResult": {
+        "properties": {
+          "developers": {
+            "items": {
+              "$ref": "#/components/schemas/UserInfo"
+            },
+            "type": "array",
+            "title": "Developers",
+            "description": "Массив информации о пользователях"
+          }
+        },
+        "type": "object",
+        "required": [
+          "developers"
+        ],
+        "title": "SearchResult"
+      },
+      "Summary": {
+        "properties": {
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "description": "Описание разработчика"
+          }
+        },
+        "type": "object",
+        "required": [
+          "summary"
+        ],
+        "title": "Summary"
+      },
+      "UserGlobalStat": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Имя пользователя на GitHub"
+          },
+          "public_repos": {
+            "type": "integer",
+            "title": "Public Repos",
+            "description": "Количество публичных репозиториев"
+          },
+          "contributed_repos": {
+            "type": "integer",
+            "title": "Contributed Repos",
+            "description": "Количество репозиториев, к которым пользователь внес вклад"
+          },
+          "commits_total": {
+            "type": "integer",
+            "title": "Commits Total",
+            "description": "Общее количество коммитов"
+          },
+          "commits_per_day": {
+            "type": "number",
+            "title": "Commits Per Day",
+            "description": "Среднее количество коммитов в день"
+          },
+          "commits_per_week": {
+            "type": "number",
+            "title": "Commits Per Week",
+            "description": "Среднее количество коммитов в неделю"
+          },
+          "commits_per_year": {
+            "type": "number",
+            "title": "Commits Per Year",
+            "description": "Среднее количество коммитов в год"
+          },
+          "average_commit_size": {
+            "type": "number",
+            "title": "Average Commit Size",
+            "description": "Средний размер коммита"
+          },
+          "languages": {
+            "items": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Languages",
+            "description": "Используемые языки программирования и количество строчек кода на этом языке"
+          },
+          "competencies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Competencies",
+            "description": "Компетенции, разработчика (направаления разработки)"
+          },
+          "using_github_features": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Using Github Features",
+            "description": "Используемые функции GitHub, такие как 'issues' или 'actions'"
+          },
+          "stack": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stack",
+            "description": "Технологический стек, используемый в проекте (подключаемые либы)"
+          },
+          "score": {
+            "items": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Score",
+            "description": "Оценки по стеку технологий (от 0 до 10)"
+          },
+          "prep_repos": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Prep Repos",
+            "description": "Список репозиториев по которым мы имеем статистику в БД"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "public_repos",
+          "contributed_repos",
+          "commits_total",
+          "commits_per_day",
+          "commits_per_week",
+          "commits_per_year",
+          "average_commit_size",
+          "languages",
+          "competencies",
+          "using_github_features",
+          "stack",
+          "score",
+          "prep_repos"
+        ],
+        "title": "UserGlobalStat",
+        "example": {
+          "average_commit_size": 120,
+          "commits_per_day": 2,
+          "commits_per_week": 14,
+          "commits_per_year": 730,
+          "commits_total": 1000,
+          "competencies": [
+            "backend_development",
+            "devops"
+          ],
+          "contributed_repos": 20,
+          "languages": [
+            {
+              "Python": 75
+            },
+            {
+              "JavaScript": 25
+            }
+          ],
+          "public_repos": 50,
+          "repositories": [
+            "john/repo1",
+            "mark/repo2"
+          ],
+          "score": [
+            {
+              "Django": 5
+            },
+            {
+              "Docker": 10
+            }
+          ],
+          "stack": [
+            "Django",
+            "Docker"
+          ],
+          "username": "john_doe",
+          "using_github_features": [
+            "pull_requests",
+            "wiki"
+          ]
+        }
+      },
+      "UserInfo": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Имя пользователя на GitHub"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Полное имя пользователя"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "Электронная почта пользователя"
+          },
+          "team_projects": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Projects",
+            "description": "Количество проектов в команде"
+          },
+          "solo_projects": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solo Projects",
+            "description": "Количество личных проектов"
+          },
+          "solo_gist": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solo Gist",
+            "description": "Количество публичных гистов"
+          },
+          "account_age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Age",
+            "description": "Возраст аккаунта"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url",
+            "description": "Ссылка на аватар пользователя"
+          },
+          "html_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Html Url",
+            "description": "Ссылка на профиль пользователя"
+          },
+          "followers": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followers",
+            "description": "Количество подписчиков"
+          },
+          "following": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Following",
+            "description": "Количество отслеживаемых пользователей"
+          },
+          "repos": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Repos",
+            "description": "Названия всех репозиториев в которые пользователь контрибьютил"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "repos"
+        ],
+        "title": "UserInfo",
+        "example": {
+          "account_age": 3,
+          "avatar_url": "https://example.com/avatar.jpg",
+          "email": "john@example.com",
+          "followers": 100,
+          "following": 50,
+          "html_url": "https://github.com/john_doe",
+          "name": "John Doe",
+          "repos:": [
+            "jack/repo1, sparrow/repo2"
+          ],
+          "solo_gist": 3,
+          "solo_projects": 10,
+          "team_projects": 5,
+          "username": "john_doe"
+        }
+      },
+      "UserRepoStat": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Имя пользователя на GitHub"
+          },
+          "repo_name": {
+            "type": "string",
+            "title": "Repo Name",
+            "description": "Название репозитория"
+          },
+          "repo_html_url": {
+            "type": "string",
+            "title": "Repo Html Url",
+            "description": "URL-адрес репозитория"
+          },
+          "languages": {
+            "items": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Languages",
+            "description": "Используемые языки программирования и количество строчек кода на этом языке"
+          },
+          "competencies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Competencies",
+            "description": "Компетенции, разработчика (направаления разработки)"
+          },
+          "using_github_features": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Using Github Features",
+            "description": "Используемые функции GitHub, такие как 'issues' или 'actions'"
+          },
+          "stack": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stack",
+            "description": "Технологический стек, используемый в проекте (подключаемые либы)"
+          },
+          "score": {
+            "items": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Score",
+            "description": "Оценки по стеку технологий (от 0 до 10)"
+          },
+          "commits_total": {
+            "type": "integer",
+            "title": "Commits Total",
+            "description": "Общее количество коммитов в репозитории"
+          },
+          "commits_per_day": {
+            "type": "number",
+            "title": "Commits Per Day",
+            "description": "Среднее количество коммитов в день"
+          },
+          "commits_per_week": {
+            "type": "number",
+            "title": "Commits Per Week",
+            "description": "Среднее количество коммитов в неделю"
+          },
+          "commits_per_year": {
+            "type": "number",
+            "title": "Commits Per Year",
+            "description": "Среднее количество коммитов в год"
+          },
+          "average_commit_size": {
+            "type": "number",
+            "title": "Average Commit Size",
+            "description": "Средний размер коммита"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "repo_name",
+          "repo_html_url",
+          "languages",
+          "competencies",
+          "using_github_features",
+          "stack",
+          "score",
+          "commits_total",
+          "commits_per_day",
+          "commits_per_week",
+          "commits_per_year",
+          "average_commit_size"
+        ],
+        "title": "UserRepoStat",
+        "example": {
+          "average_commit_size": 100,
+          "commits_per_day": 1,
+          "commits_per_week": 7,
+          "commits_per_year": 365,
+          "commits_total": 150,
+          "competencies": [
+            "data_analysis",
+            "backend",
+            "frontend",
+            "devops"
+          ],
+          "languages": [
+            {
+              "Python": 900
+            },
+            {
+              "HTML": 1000
+            }
+          ],
+          "repo_html_url": "https://github.com/john_doe/sample_repo",
+          "repo_name": "john_doe/sample_repo",
+          "score": [
+            {
+              "FastAPI": 4
+            },
+            {
+              "Pandas": 10
+            }
+          ],
+          "stack": [
+            "FastAPI",
+            "Pandas"
+          ],
+          "username": "john_doe",
+          "using_github_features": [
+            "actions",
+            "issues"
+          ]
+        }
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
   }
+}

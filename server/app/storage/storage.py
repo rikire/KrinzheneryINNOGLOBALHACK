@@ -2,7 +2,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from bson.objectid import ObjectId
 
 # Подключение к MongoDB
-MONGO_DETAILS = "mongodb://localhost:27017"
+MONGO_DETAILS = "mongodb://mongodb:27017"
 client = AsyncIOMotorClient(MONGO_DETAILS)
 
 # Создание баз данных и коллекций

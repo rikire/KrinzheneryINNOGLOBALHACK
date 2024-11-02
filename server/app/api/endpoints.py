@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command
 
-from app.services.repo_service import fetch_repo_stat
+from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat
 from app.services.user_service import fetch_user_info
 
 import yaml
@@ -12,8 +12,8 @@ router = APIRouter()
 def get_token():
     with open("config.yaml", "r") as file:
         config = yaml.safe_load(file)
-        return config.get("token")
-        
+        token = config.get("github_token")
+        return token
 
 @router.get(
     "/stat/{username}/{owner}/{repo}",

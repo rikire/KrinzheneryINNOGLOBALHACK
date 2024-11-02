@@ -1,6 +1,6 @@
 from app.schemas.schema import UserInfo
 from fastapi import HTTPException
-
+from fastapi import status
 import httpx
 
 async def fetch_user_info(username : str, token: str):
