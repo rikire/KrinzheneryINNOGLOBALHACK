@@ -87,7 +87,7 @@ class UserInfo(BaseModel):
     html_url: Optional[str] = Field(None, description="Ссылка на профиль пользователя")
     followers: Optional[int] = Field(None, description="Количество подписчиков")
     following: Optional[int] = Field(None, description="Количество отслеживаемых пользователей")
-    repos: List[str]
+    repos: List[str] = Field(..., description="Названия всех репозиториев в которые пользователь контрибьютил")
     
     class Config:
         json_schema_extra = {

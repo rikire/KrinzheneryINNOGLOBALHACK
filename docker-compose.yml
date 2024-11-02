@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest  # Образ MongoDB
+    container_name: mongodb_container  # Название контейнера
+    ports:
+      - "27017:27017"  # Проброс порта для доступа к MongoDB с хоста
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin  # Логин для администратора
+      MONGO_INITDB_ROOT_PASSWORD: admin  # Пароль для администратора
+    volumes:
+      - mongo_data:/data/db  # Сохранение данных в volume
+
+volumes:
+  mongo_data:
+  mongo_config:

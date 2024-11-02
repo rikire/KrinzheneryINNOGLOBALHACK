@@ -88,6 +88,7 @@ async def get_summary(username: str):
 async def post_create_acc(cred: AccountRegister):
     return await create_acc(cred)
 
+# Гет для комманд -_-
 @router.post(
     "/login",
     response_model=AccountInfo,
@@ -96,16 +97,17 @@ async def post_create_acc(cred: AccountRegister):
 async def post_login_acc(cred: AccountRegister):
     return await login_acc(cred)
 
+
 @router.post(
     "/command",
     summary="CRUD для комманд.",
     description="Принимает комманду.")
-async def post_command(command: Command):
-    return await crud_command(command)
+async def post_command(cred: AccountRegister, command: Command):
+    return await crud_command(cred, command)
 
 @router.post("/command/delete")
-async def post_command_del(command: Command):
-    return await post_command_del(command)
+async def post_command_del(cred: AccountRegister, command: Command):
+    return await post_command_del(cred, command)
 
 @router.get(
     "/search/{querry}",
