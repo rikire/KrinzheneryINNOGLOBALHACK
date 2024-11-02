@@ -3,6 +3,9 @@ from bson.objectid import ObjectId
 from ..storage import user_collection
 from typing import List
 
+async def is_repo_stat_exists(username: str, repo_name: str) -> bool:
+    pass
+
 # Создать пользователя
 async def create_repo_stat(repo_stat_data: RepoStat) -> RepoStat:
     pass
