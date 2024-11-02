@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command
-
+from app.services.repo_service import fetch_repo_stat
 router = APIRouter()
 
 def get_token():
