@@ -1,11 +1,14 @@
 from app.schemas.schema import UserInfo
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 import httpx
+from app.storage.crud.users import read_user, create_user
 
 async def fetch_user_info(username : str, token: str):
-    # TODO check account scan
-
+    account_info = await read_user(username)
+    if account_info is not None:
+        return account_info
+    
     headers = {
         "Authorization": f"token {token}",
         "Accept": "application/vnd.github.v3+json"
@@ -27,6 +30,7 @@ async def fetch_user_info(username : str, token: str):
                 detail="Доступ к информации о пользователе ограничен"
             )
         elif user_response.status_code != 200:
+            print(user_response)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                 detail="Ошибка при получении данных пользователя"
@@ -66,6 +70,8 @@ async def fetch_user_info(username : str, token: str):
             following=user_data.get("following"),
             repos=repos
         )
+
+        account_info = await create_user(account_info)
         
     return account_info
 

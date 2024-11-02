@@ -12,7 +12,7 @@ router = APIRouter()
 def get_token():
     with open("config.yaml", "r") as file:
         config = yaml.safe_load(file)
-        return config.get("token")
+        return config.get("github_token")
         
 
 @router.get(
