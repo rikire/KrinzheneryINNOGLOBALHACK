@@ -1,12 +1,24 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 
+class Score(BaseModel):
+    name: str = Field(..., description="Название компетенции")
+    score: int = Field(..., description="Оценка по компетенции")
+
+class Competence(BaseModel):
+    competence: List[Score] = Field(..., description="Список оценок по компетенциям")
+
+class Competencies(BaseModel):
+    username: str = Field(..., description="Имя пользователя на GitHub")
+    repo_name: str = Field(..., description="Название репозитория в формате '{owner}/{repo}'")
+    competencies: List[Competence] = Field(..., description="Список компетенций разработчика")
+    resume: str = Field(..., description="Резюме разработчика")
 
 class UserRepoStat(BaseModel):
     username: str = Field(..., description="Имя пользователя на GitHub")
-    repo_name: str = Field(..., description="Название репозитория")
+    repo_name: str = Field(..., description="Название репозитория в формате '{owner}/{repo}'")
     repo_html_url: str = Field(..., description="URL-адрес репозитория")
-    competencies: Dict = Field(..., description="Компетенции, разработчика")
+    competencies: List[Competencies] = Field(..., description="Список компетенций разработчика")
     using_github_features: List[str] = Field(..., description="Используемые функции GitHub, такие как 'issues' или 'actions'")
     commits_total: int = Field(..., description="Общее количество коммитов в репозитории")
     commits_per_day: float = Field(..., description="Среднее количество коммитов в день")
@@ -20,57 +32,57 @@ class UserRepoStat(BaseModel):
                 "username": "john_doe",
                 "repo_name": "john_doe/sample_repo",
                 "repo_html_url": "https://github.com/john_doe/sample_repo",
-                "languages": [{"Python": 900}, {"HTML": 1000}],
-                "competencies": ["data_analysis", "backend", "frontend", "devops"],
-                "stack": ["FastAPI", "Pandas"],
-                "score": [{"FastAPI": 4}, {"Pandas": 10}],
+                "competencies": [
+                    {
+                        "username": "john_doe",
+                        "repo_name": "john_doe/sample_repo",
+                        "competencies": [{"competence": [{"name": "FastAPI", "score": 4}, {"name": "Pandas", "score": 10}]}],
+                        "resume": "Backend developer with expertise in Python"
+                    }
+                ],
                 "using_github_features": ["actions", "issues"],
                 "commits_total": 150,
-                "commits_per_day": 1,
-                "commits_per_week": 7,
+                "commits_per_day": 1.5,
+                "commits_per_week": 10.5,
                 "commits_per_year": 365,
-                "average_commit_size": 100,
+                "average_commit_size": 120.5,
             }
         }
 
-
 class UserGlobalStat(BaseModel):
     username: str = Field(..., description="Имя пользователя на GitHub")
-    public_repos: int = Field(..., description="Количество публичных репозиториев")
     contributed_repos: int = Field(..., description="Количество репозиториев, к которым пользователь внес вклад")
     commits_total: int = Field(..., description="Общее количество коммитов")
     commits_per_day: float = Field(..., description="Среднее количество коммитов в день")
     commits_per_week: float = Field(..., description="Среднее количество коммитов в неделю")
     commits_per_year: float = Field(..., description="Среднее количество коммитов в год")
     average_commit_size: float = Field(..., description="Средний размер коммита")
-    languages: List[Dict[str, int]] = Field(..., description="Используемые языки программирования и количество строчек кода на этом языке")
-    competencies: List[str] = Field(..., description="Компетенции, разработчика (направаления разработки)")
+    competencies: List[Competencies] = Field(..., description="Список компетенций разработчика")
     using_github_features: List[str] = Field(..., description="Используемые функции GitHub, такие как 'issues' или 'actions'")
-    stack: List[str] = Field(..., description="Технологический стек, используемый в проекте (подключаемые либы)")
-    score: List[Dict[str, int]] = Field(..., description="Оценки по стеку технологий (от 0 до 10)")
-    prep_repos: List[str] = Field(..., description="Список репозиториев по которым мы имеем статистику в БД")
-
+    prep_repos: List[str] = Field(..., description="Список репозиториев, по которым имеется статистика в БД")
 
     class Config:
         json_schema_extra = {
             "example": {
                 "username": "john_doe",
-                "public_repos": 50,
                 "contributed_repos": 20,
                 "commits_total": 1000,
-                "commits_per_day": 2,
-                "commits_per_week": 14,
-                "commits_per_year": 730,
-                "average_commit_size": 120,
-                "languages": [{"Python": 75}, {"JavaScript": 25}],
-                "competencies": ["backend_development", "devops"],
+                "commits_per_day": 2.5,
+                "commits_per_week": 17.5,
+                "commits_per_year": 910,
+                "average_commit_size": 115.0,
+                "competencies": [
+                    {
+                        "username": "john_doe",
+                        "repo_name": "john_doe/sample_repo",
+                        "competencies": [{"competence": [{"name": "Django", "score": 8}, {"name": "Docker", "score": 7}]}],
+                        "resume": "Experienced developer in backend and DevOps"
+                    }
+                ],
                 "using_github_features": ["pull_requests", "wiki"],
-                "stack": ["Django", "Docker"],
-                "score": [{"Django": 5}, {"Docker": 10}],
-                "repositories":["john/repo1", "mark/repo2"]
+                "prep_repos": ["john_doe/repo1", "mark/repo2"]
             }
         }
-
 
 class UserInfo(BaseModel):
     username: str = Field(..., description="Имя пользователя на GitHub")
@@ -79,13 +91,13 @@ class UserInfo(BaseModel):
     team_projects: Optional[int] = Field(None, description="Количество проектов в команде")
     solo_projects: Optional[int] = Field(None, description="Количество личных проектов")
     solo_gist: Optional[int] = Field(None, description="Количество публичных гистов")
-    account_age: Optional[int] = Field(None, description="Возраст аккаунта")
+    account_age: Optional[int] = Field(None, description="Возраст аккаунта в годах")
     avatar_url: Optional[str] = Field(None, description="Ссылка на аватар пользователя")
     html_url: Optional[str] = Field(None, description="Ссылка на профиль пользователя")
     followers: Optional[int] = Field(None, description="Количество подписчиков")
     following: Optional[int] = Field(None, description="Количество отслеживаемых пользователей")
-    repos: List[str] = Field(..., description="Названия всех репозиториев в которые пользователь контрибьютил")
-    
+    repos: List[str] = Field(..., description="Список репозиториев, в которые пользователь контрибьютил, в формате '{owner}/{repo}'")
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -100,7 +112,7 @@ class UserInfo(BaseModel):
                 "html_url": "https://github.com/john_doe",
                 "followers": 100,
                 "following": 50,
-                "repos:": ["jack/repo1, sparrow/repo2"]
+                "repos": ["jack/repo1", "sparrow/repo2"]
             }
         }
 
@@ -120,13 +132,11 @@ class AccountInfo(BaseModel):
 class Summary(BaseModel):
     summary: str = Field(..., description="Описание разработчика")
 
-
 class SearchQuery(BaseModel):
     query: str = Field(..., description="Строка запроса для поиска пользователей по компетенциям.")
-
 
 class SearchResult(BaseModel):
     developers: List[UserInfo] = Field(..., description="Массив информации о пользователях")
 
 class ActivityList(BaseModel):
-    commit_diff: List[int] = Field(..., description="Список разностей между добавленнымыми и удаленными строками коммитов")
+    commit_diff: List[int] = Field(..., description="Список разностей между добавленными и удаленными строками коммитов")

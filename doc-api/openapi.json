@@ -37,6 +37,16 @@
               "type": "string",
               "title": "Repo"
             }
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "github",
+              "title": "Target"
+            }
           }
         ],
         "responses": {
@@ -321,8 +331,8 @@
     },
     "/command": {
       "post": {
-        "summary": "CRUD для комманд.",
-        "description": "Принимает комманду.",
+        "summary": "Добавить команду к аккаунтую",
+        "description": "Добавить команду к аккаунту.",
         "operationId": "post_command_command_post",
         "requestBody": {
           "content": {
@@ -340,7 +350,7 @@
             "content": {
               "application/json": {
                 "schema": {
-
+                  "$ref": "#/components/schemas/CommandInfo"
                 }
               }
             }
@@ -360,7 +370,8 @@
     },
     "/command/delete": {
       "post": {
-        "summary": "Post Command Del",
+        "summary": "Убрать команду из аккаунта",
+        "description": "Убрать команду из аккаунта.",
         "operationId": "post_command_del_command_delete_post",
         "requestBody": {
           "content": {
@@ -378,7 +389,7 @@
             "content": {
               "application/json": {
                 "schema": {
-
+                  "$ref": "#/components/schemas/CommandInfo"
                 }
               }
             }
@@ -396,19 +407,76 @@
         }
       }
     },
-    "/search/{querry}": {
-      "get": {
+    "/search": {
+      "post": {
         "summary": "Поиск пользователей по компетенциям",
         "description": "Возвращает список UserInfo.",
-        "operationId": "get_search_search__querry__get",
+        "operationId": "get_search_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activity/{username}/{owner}/{repo}": {
+      "get": {
+        "summary": "Получение числовых характеристик изменения коммитов.",
+        "description": "Получение числовых характеристик изменения коммитов.",
+        "operationId": "get_activity_activity__username___owner___repo__get",
         "parameters": [
           {
-            "name": "querry",
+            "name": "username",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Querry"
+              "title": "Username"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Owner"
+            }
+          },
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
             }
           }
         ],
@@ -418,7 +486,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SearchResult"
+                  "$ref": "#/components/schemas/ActivityList"
                 }
               }
             }
@@ -448,7 +516,7 @@
           },
           "command_list": {
             "items": {
-              "$ref": "#/components/schemas/Command"
+              "$ref": "#/components/schemas/CommandInfo"
             },
             "type": "array",
             "title": "Command List",
@@ -491,13 +559,30 @@
         ],
         "title": "AccountRegister"
       },
+      "ActivityList": {
+        "properties": {
+          "commit_diff": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Commit Diff",
+            "description": "Список разностей между добавленнымыми и удаленными строками коммитов"
+          }
+        },
+        "type": "object",
+        "required": [
+          "commit_diff"
+        ],
+        "title": "ActivityList"
+      },
       "Body_post_command_command_post": {
         "properties": {
           "cred": {
             "$ref": "#/components/schemas/AccountRegister"
           },
           "command": {
-            "$ref": "#/components/schemas/Command"
+            "$ref": "#/components/schemas/CommandInfo"
           }
         },
         "type": "object",
@@ -513,7 +598,7 @@
             "$ref": "#/components/schemas/AccountRegister"
           },
           "command": {
-            "$ref": "#/components/schemas/Command"
+            "$ref": "#/components/schemas/CommandInfo"
           }
         },
         "type": "object",
@@ -523,7 +608,7 @@
         ],
         "title": "Body_post_command_del_command_delete_post"
       },
-      "Command": {
+      "CommandInfo": {
         "properties": {
           "command_name": {
             "type": "string",
@@ -544,7 +629,7 @@
           "command_name",
           "participants"
         ],
-        "title": "Command"
+        "title": "CommandInfo"
       },
       "HTTPValidationError": {
         "properties": {
@@ -558,6 +643,20 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "SearchQuery": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "Строка запроса для поиска пользователей по компетенциям."
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "SearchQuery"
       },
       "SearchResult": {
         "properties": {
