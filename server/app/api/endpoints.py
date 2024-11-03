@@ -1,9 +1,10 @@
 from fastapi import APIRouter
-from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command, SearchQuery
+from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, CommandInfo, SearchQuery
 
 from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat
 from app.services.user_service import fetch_user_info
 from app.services.search_service import fetch_search
+from app.services.account_service import create_acc, login_acc, add_command, remove_command
 
 import yaml
 
@@ -111,14 +112,18 @@ async def post_login_acc(cred: AccountRegister):
 
 @router.post(
     "/command",
-    summary="CRUD для комманд.",
-    description="Принимает комманду.")
-async def post_command(cred: AccountRegister, command: Command):
-    return await crud_command(cred, command)
+    response_model=CommandInfo,
+    summary="Добавить команду к аккаунтую",
+    description="Добавить команду к аккаунту.")
+async def post_command(cred: AccountRegister, command: CommandInfo):
+    return await add_command(cred, command)
 
-@router.post("/command/delete")
-async def post_command_del(cred: AccountRegister, command: Command):
-    return await post_command_del(cred, command)
+@router.post("/command/delete",
+    response_model=CommandInfo,
+    summary="Убрать команду из аккаунта",
+    description="Убрать команду из аккаунта.")
+async def post_command_del(cred: AccountRegister, command: CommandInfo):
+    return await remove_command(cred, command)
 
 @router.post(
     "/search",
