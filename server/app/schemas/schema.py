@@ -143,3 +143,4 @@ class SearchResult(BaseModel):
 
 class ActivityList(BaseModel):
     commit_diff: List[int] = Field(..., description="Разности между добавленными и удаленными строками коммитов")
+

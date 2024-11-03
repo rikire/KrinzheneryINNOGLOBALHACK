@@ -396,3 +396,4 @@ async def fetch_activity(username: str, owner:str, repo: str, token: str) -> Act
     return ActivityList(
         commit_diff=[(item.get('additions') - item.get('deletions')) for item in data]
     )
+
