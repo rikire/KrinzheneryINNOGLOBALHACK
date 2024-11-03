@@ -187,7 +187,11 @@ def ask_llama_for_hardskills_resume(prompt):
         return f"Error: {response.status_code} - {response.text}"
 
     
-def get_hardskills_from_llama(repo_path: str, author_name: str) -> UserCompetencyProfile:
+def get_hardskills_from_llama(repo_path: str, user_names: list[str]) -> UserCompetencyProfile:
+    username, name, email = user_names
+    author_name = email
+    if email is None:
+        author_name = name
     # Получаем уникальные имена файлов
     unique_filenames = get_all_unique_filenames(author_name, repo_path)
     if len(unique_filenames) == 0:
