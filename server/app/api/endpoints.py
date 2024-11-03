@@ -190,7 +190,7 @@ async def post_login_acc(cred: AccountRegister):
     summary="Добавление команды к аккаунту",
     description="Добавляет команду к учетной записи пользователя."
 )
-async def post_command(cred: AccountRegister, command: CommandInfo):
+async def post_command(login: str, command: CommandInfo):
     """
     Добавляет команду к учетной записи пользователя.
 
@@ -206,7 +206,7 @@ async def post_command(cred: AccountRegister, command: CommandInfo):
     CommandInfo
         Информация о добавленной команде.
     """
-    return await add_command(cred, command)
+    return await add_command(login, command)
 
 @router.post(
     "/command/delete",
@@ -214,7 +214,7 @@ async def post_command(cred: AccountRegister, command: CommandInfo):
     summary="Удаление команды из аккаунта",
     description="Удаляет команду из учетной записи пользователя."
 )
-async def post_command_del(cred: AccountRegister, command: CommandInfo):
+async def post_command_del(login: str, command: CommandInfo):
     """
     Удаляет команду из учетной записи пользователя.
 
@@ -230,7 +230,7 @@ async def post_command_del(cred: AccountRegister, command: CommandInfo):
     CommandInfo
         Информация об удаленной команде.
     """
-    return await remove_command(cred, command)
+    return await remove_command(login, command)
 
 @router.post(
     "/search",

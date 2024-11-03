@@ -30,33 +30,33 @@ async def login_acc(cred: AccountRegister) -> AccountInfo:
         favorites=acc.favorites
     )
 
-async def add_command(cred: AccountRegister, command: CommandInfo):
+async def add_command(login: str, command: CommandInfo):
     command_obj = Command(
         command_name = command.command_name,
         participants = command.participants
     )
-    acc = await get_account(cred.login)
+    acc = await get_account(login)
     if acc is None:
         return None
     else:
         acc.command_list.append(command_obj)
-        update_account(cred.login, acc)
+        update_account(login, acc)
         return CommandInfo(
             command_name=command.command_name,
             participants=command.participants
         )
 
-async def remove_command(cred: AccountRegister, command: CommandInfo):
+async def remove_command(login: str, command: CommandInfo):
     command_obj = Command(
         command_name = command.command_name,
         participants = command.participants
     )
-    acc = await get_account(cred.login)
+    acc = await get_account(login)
     if acc is None:
         return None
     else:
         acc.command_list.remove(command_obj)
-        update_account(cred.login, acc)
+        update_account(login, acc)
         return CommandInfo(
             command_name=command.command_name,
             participants=command.participants
