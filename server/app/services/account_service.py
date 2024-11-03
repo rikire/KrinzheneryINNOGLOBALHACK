@@ -18,6 +18,12 @@ async def create_acc(cred : AccountRegister) -> AccountInfo:
         favorites=[]
     )
 
+def command_to_info(command: Command):
+    return CommandInfo(
+        command_name=command.command_name,
+        participants=command.participants
+    )
+
 async def login_acc(cred: AccountRegister) -> AccountInfo:
     acc = await get_account(cred.login)
     if acc is None or acc.password != cred.password:
@@ -26,43 +32,24 @@ async def login_acc(cred: AccountRegister) -> AccountInfo:
         return AccountInfo(
         login=acc.login,
         password=acc.password,
-        command_list=acc.command_list,
+        command_list=[command_to_info(item) for item in acc.command_list],
         favorites=acc.favorites
     )
 
-async def add_command(login: str, command: CommandInfo):
-    command_obj = Command(
-        command_name = command.command_name,
-        participants = command.participants
-    )
-    acc = await get_account(login)
+async def update_commands(querry: CommandQuerry):
+    commands = [Command(
+        command_name = com.command_name,
+        participants = com.participants
+    ) for com in querry.commands]
+    acc = await get_account(querry.login)
     if acc is None:
         return None
     else:
-        acc.command_list.append(command_obj)
-        update_account(login, acc)
+        acc.command_list=commands
+        await update_account(querry.login, acc)
         return AccountInfo(
             login=acc.login,
-            password=acc.password,
-            command_list=acc.command_list,
-            favorites=acc.favorites
-        )
-
-async def remove_command(login: str, command: CommandInfo):
-    command_obj = Command(
-        command_name = command.command_name,
-        participants = command.participants
-    )
-    acc = await get_account(login)
-    if acc is None:
-        return None
-    else:
-        acc.command_list.remove(command_obj)
-        update_account(login, acc)
-        return AccountInfo(
-            login=acc.login,
-            password=acc.password,
-            command_list=acc.command_list,
+            command_list=[command_to_info(item) for item in acc.command_list],
             favorites=acc.favorites
         )
     
@@ -73,11 +60,10 @@ async def update_favorites(querry: FavoriteListQuerry):
         return None
     else:
         acc.favorites = querry.favorites
-        update_account(querry.login, acc)
+        await update_account(querry.login, acc)
         return AccountInfo(
             login=acc.login,
-            password=acc.password,
-            command_list=acc.command_list,
+            command_list=[command_to_info(item) for item in acc.command_list],
             favorites=acc.favorites
         )
 
@@ -87,11 +73,10 @@ async def add_favorite(querry: FavoriteQuerry):
         return None
     else:
         acc.favorites.append(querry.target)
-        update_account(querry.login, acc)
+        await update_account(querry.login, acc)
         return AccountInfo(
             login=acc.login,
-            password=acc.password,
-            command_list=acc.command_list,
+            command_list=[command_to_info(item) for item in acc.command_list],
             favorites=acc.favorites
         )
 
@@ -101,11 +86,10 @@ async def remove_favorite(querry: FavoriteQuerry):
         return None
     else:
         acc.favorites.remove(querry.target)
-        update_account(querry.login, acc)
+        await update_account(querry.login, acc)
         return AccountInfo(
             login=acc.login,
-            password=acc.password,
-            command_list=acc.command_list,
+            command_list=[command_to_info(item) for item in acc.command_list],
             favorites=acc.favorites
         )
 
@@ -115,11 +99,10 @@ async def add_account(querry: FavoriteQuerry):
         return None
     else:
         acc.favorites.append(querry.target)
-        update_account(querry.login, acc)
+        await update_account(querry.login, acc)
         return AccountInfo(
             login=acc.login,
-            password=acc.password,
-            command_list=acc.command_list,
+            command_list=[command_to_info(item) for item in acc.command_list],
             favorites=acc.favorites
         )
             

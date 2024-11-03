@@ -153,7 +153,7 @@ class ActivityList(BaseModel):
 
 class CommandQuerry(BaseModel):
     login: str = Field(..., description="Логин")
-    command: CommandInfo = Field(..., description="Команда")
+    commands: List[CommandInfo] = Field(..., description="Собранные команды")
 
 class FavoriteQuerry(BaseModel):
     login: str = Field(..., description="Логин")

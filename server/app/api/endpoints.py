@@ -9,7 +9,7 @@ from app.services.repo_service import (
 from app.services.user_service import fetch_user_info
 from app.services.search_service import fetch_search
 from app.services.account_service import (
-    create_acc, login_acc, add_command, remove_command, add_favorite, remove_favorite, update_favorites
+    create_acc, login_acc, update_commands, add_favorite, remove_favorite, update_favorites
 )
 from app.storage.crud.repo_stats import (
     delete_repo_stat
@@ -178,7 +178,7 @@ async def post_login_acc(cred: AccountRegister):
 )
 async def post_command(querry: CommandQuerry):
     """
-    Добавляет команду к учетной записи пользователя.
+    Изменяет команды к учетной записи пользователя.
 
     Parameters
     ----------
@@ -192,31 +192,8 @@ async def post_command(querry: CommandQuerry):
     CommandInfo
         Информация о добавленной команде.
     """
-    return await add_command(querry.login, querry.command)
+    return await update_commands(querry.login, querry.command)
 
-@router.post(
-    "/command/delete",
-    response_model=AccountInfo,
-    summary="Удаление команды из аккаунта",
-    description="Удаляет команду из учетной записи пользователя."
-)
-async def post_command_del(querry: CommandQuerry):
-    """
-    Удаляет команду из учетной записи пользователя.
-
-    Parameters
-    ----------
-    cred : AccountRegister
-        Данные для авторизации пользователя.
-    command : CommandInfo
-        Данные о команде, которую необходимо удалить.
-
-    Returns
-    -------
-    CommandInfo
-        Информация об удаленной команде.
-    """
-    return await remove_command(querry.login, querry.command)
 
 @router.post(
     "/favorite",
