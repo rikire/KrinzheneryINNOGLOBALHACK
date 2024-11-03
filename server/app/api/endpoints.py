@@ -6,7 +6,7 @@ from app.schemas.schema import (
 from app.services.repo_service import (
     fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
 )
-from app.services.user_service import fetch_user_info
+from app.services.user_service import fetch_user_info, fetch_user_soft_skills
 from app.services.search_service import fetch_search
 from app.services.account_service import (
     create_acc, login_acc, update_commands, add_favorite, remove_favorite, update_favorites
@@ -19,8 +19,27 @@ from app.config.config import get_token
 
 router = APIRouter()
 
-# ручка для софт скиллс
-# ручки для удаления из бд
+
+@router.get(
+    "/soft_skills/{username}",
+    summary="Получение софтскиллов разработчика",
+    description="Возвращает список софтскиллов разработчика."
+)
+async def get_soft_skills(username: str):
+    """
+    Возвращает список софтскиллов разработчика.
+
+    Parameters
+    ----------
+    username : str
+        Имя пользователя на GitHub.
+
+    Returns
+    -------
+    Summary
+        Список софтскиллов разработчика.
+    """
+    return await fetch_user_soft_skills(username, token=get_token())
 
 @router.get(
     "/stat/{username}/{owner}/{repo}",
@@ -55,32 +74,6 @@ async def get_repo_stat(username: str, owner: str, repo: str, target: str = 'loc
         Статистика репозитория, включая метрики и стек технологий.
     """
     return await fetch_repo_stat(username, owner, repo, token=get_token(), target=target)
-
-@router.get(
-    "/actualize_stat/{username}/{owner}/{repo}",
-    response_model=UserRepoStat,
-    summary="Актуализация статистики репозитория",
-    description="Обновляет информацию о статистике репозитория в базе данных."
-)
-async def get_actualize_stat(username: str, owner: str, repo: str):
-    """
-    Актуализирует статистику указанного репозитория в базе данных.
-
-    Parameters
-    ----------
-    username : str
-        Имя пользователя на GitHub.
-    owner : str
-        Владелец репозитория.
-    repo : str
-        Название репозитория.
-
-    Returns
-    -------
-    UserRepoStat
-        Обновленная статистика репозитория.
-    """
-    return await fetch_actualize_stat(username, owner, repo, token=get_token())
 
 @router.get(
     "/global_stat/{username}",
@@ -270,31 +263,6 @@ async def get_activity(username: str, owner: str, repo: str):
         Список разностей между добавленными и удаленными строками коммитов.
     """
     return await fetch_activity(username, owner, repo, get_token())
-
-@router.post(
-    "/post_analysis/{username}/{owner}/{repo}",
-    summary="Анализ репозитория с использованием Llama",
-    description="Добавляет в базу данных анализ репозитория, используя модель Llama."
-)
-async def post_analysis(username: str, owner: str, repo: str):
-    """
-    Анализирует репозиторий с использованием модели Llama.
-
-    Parameters
-    ----------
-    username : str
-        Имя пользователя на GitHub.
-    owner : str
-        Владелец репозитория.
-    repo : str
-        Название репозитория.
-
-    Returns
-    -------
-    dict
-        Результат анализа.
-    """
-    return await fetch_analysis(username, owner, repo, get_token())
 
 @router.delete(
     "/delete_stat/{username}/{owner}/{repo}",

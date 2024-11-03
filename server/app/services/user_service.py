@@ -7,6 +7,9 @@ from datetime import datetime
 from fastapi import HTTPException, status
 import httpx
 
+import requests
+import os
+
 async def fetch_user_info(username: str, token: str) -> UserInfo:
     account_info = await read_user(username)
     if account_info is not None:
@@ -104,3 +107,46 @@ async def get_collaborators_count(client, owner, repo, token):
         return 1
     else:
         return f"Ошибка: {response.status_code} - {response.reason}"
+
+import requests
+
+async def fetch_user_soft_skills(username, token):    
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(f"https://api.github.com/search/issues?q=author:{username}+is:issue&per_page=10&page=0", headers=headers)
+    
+    if response.status_code != 200:
+        return response
+    
+    user_issues = response.json()
+    data = ""
+    if user_issues:
+        for issue in user_issues["items"]:
+            if issue.get("body"):
+                data += issue["body"]
+    else:
+        return {"soft_skills": ""}
+    
+    # Prompt to assess user comments
+    url = "https://vk-devinsight-case.olymp.innopolis.university/generate"
+    prompt = "Оцени комментарии пользователя и дай характеристику его навыкам вежливости, уважения, грамотности, инициативности, ответственности и других качеств, которые ты можешь определить. Приведи несколько предложений на русском языке в формате сплошного текста без использования разметки.\nКомментарии:\n"
+
+    request_data = {
+        "prompt": [prompt + data],
+        "stream": False,
+        "max_tokens": 500,
+        "temperature": 0.5,
+        "seed": 42,
+    }
+    headers = {"Content-Type": "application/json"}
+
+    # Use `request_data` instead of `data` as JSON payload
+    response_lama = requests.post(url, json=request_data, headers=headers)
+    
+    if response_lama.status_code == 200:
+        # Get the JSON content from the response
+        result = response_lama.json()
+        return {"soft_skills": result}
+    else:
+        return {"error": f"Failed to fetch soft skills, status code: {response_lama.status_code}"}
+
+    
