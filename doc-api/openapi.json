@@ -8,7 +8,7 @@
     "/stat/{username}/{owner}/{repo}": {
       "get": {
         "summary": "Получение статистики репозитория",
-        "description": "Возвращает статистику по конкретному репозиторию пользователя, включая языки, стек технологий и метрики коммитов.",
+        "description": "Возвращает статистику по конкретному репозиторию пользователя, \n    включая языки, стек технологий и метрики коммитов.\n    Если есть в базе данных статистика, то возвращает ее.\n    Если нет, то возвращает статистику по репозиторию с GitHub,\n    предварительно клонируя его, если параметр target = 'loclal',\n    или использует апи GitHub, если параметр target = 'github'.\n    Затем сохраняет статистику в базу данных.",
         "operationId": "get_repo_stat_stat__username___owner___repo__get",
         "parameters": [
           {
@@ -44,7 +44,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "default": "github",
+              "default": "local",
               "title": "Target"
             }
           }
@@ -76,7 +76,7 @@
     "/actualize_stat/{username}/{owner}/{repo}": {
       "get": {
         "summary": "Актуализация статистики репозитория",
-        "description": "Обновляет информацию о статистике репозитория в бд.",
+        "description": "Обновляет информацию о статистике репозитория в базе данных.",
         "operationId": "get_actualize_stat_actualize_stat__username___owner___repo__get",
         "parameters": [
           {
@@ -133,8 +133,8 @@
     },
     "/global_stat/{username}": {
       "get": {
-        "summary": "Возвращает глобальную статистику о пользователе",
-        "description": "Сканирует все репозитории человека и возвращает глобальную статистику.",
+        "summary": "Получение глобальной статистики пользователя",
+        "description": "Объединяет все статистики репозиториев пользователя, которые есть в базе данных и возвращает глобальную статистику.",
         "operationId": "get_global_stat_global_stat__username__get",
         "parameters": [
           {
@@ -173,8 +173,8 @@
     },
     "/user_info/{username}": {
       "get": {
-        "summary": "Возвращает информацию о пользователе",
-        "description": "Возвращает информацию о профиле пользователя на гитхаб.",
+        "summary": "Получение информации о пользователе",
+        "description": "Возвращает информацию о профиле пользователя на GitHub.",
         "operationId": "get_user_info_user_info__username__get",
         "parameters": [
           {
@@ -211,50 +211,10 @@
         }
       }
     },
-    "/summary/{username}": {
-      "get": {
-        "summary": "Возвращает саммари о пользователе",
-        "description": "Возвращает саммари о пользователе, сгенерированное ламой.",
-        "operationId": "get_summary_summary__username__get",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Username"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Summary"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/register": {
       "post": {
-        "summary": "Регестрирует пользователя в системе",
-        "description": "Принимает логин и пароль.",
+        "summary": "Регистрация пользователя в системе",
+        "description": "Регистрирует нового пользователя с логином и паролем.",
         "operationId": "post_create_acc_register_post",
         "requestBody": {
           "content": {
@@ -292,8 +252,8 @@
     },
     "/login": {
       "post": {
-        "summary": "Авторизирует пользователя в системе",
-        "description": "Принимает логин и пароль.",
+        "summary": "Авторизация пользователя",
+        "description": "Авторизует пользователя в системе с логином и паролем.",
         "operationId": "post_login_acc_login_post",
         "requestBody": {
           "content": {
@@ -331,8 +291,8 @@
     },
     "/command": {
       "post": {
-        "summary": "Добавить команду к аккаунтую",
-        "description": "Добавить команду к аккаунту.",
+        "summary": "Добавление команды к аккаунту",
+        "description": "Добавляет команду к учетной записи пользователя.",
         "operationId": "post_command_command_post",
         "requestBody": {
           "content": {
@@ -370,8 +330,8 @@
     },
     "/command/delete": {
       "post": {
-        "summary": "Убрать команду из аккаунта",
-        "description": "Убрать команду из аккаунта.",
+        "summary": "Удаление команды из аккаунта",
+        "description": "Удаляет команду из учетной записи пользователя.",
         "operationId": "post_command_del_command_delete_post",
         "requestBody": {
           "content": {
@@ -410,7 +370,7 @@
     "/search": {
       "post": {
         "summary": "Поиск пользователей по компетенциям",
-        "description": "Возвращает список UserInfo.",
+        "description": "Ищет пользователей на основе заданных компетенций и возвращает список профилей.",
         "operationId": "get_search_search_post",
         "requestBody": {
           "content": {
@@ -448,8 +408,8 @@
     },
     "/activity/{username}/{owner}/{repo}": {
       "get": {
-        "summary": "Получение числовых характеристик изменения коммитов.",
-        "description": "Получение числовых характеристик изменения коммитов.",
+        "summary": "Получение числовых характеристик коммитов",
+        "description": "Возвращает числовые характеристики изменений коммитов в указанном репозитории.",
         "operationId": "get_activity_activity__username___owner___repo__get",
         "parameters": [
           {
@@ -503,6 +463,64 @@
           }
         }
       }
+    },
+    "/post_analysis/{username}/{owner}/{repo}": {
+      "post": {
+        "summary": "Анализ репозитория с использованием Llama",
+        "description": "Добавляет в базу данных анализ репозитория, используя модель Llama.",
+        "operationId": "post_analysis_post_analysis__username___owner___repo__post",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Username"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Owner"
+            }
+          },
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -512,7 +530,7 @@
           "login": {
             "type": "string",
             "title": "Login",
-            "description": "Логин аккаунта"
+            "description": "Логин"
           },
           "command_list": {
             "items": {
@@ -528,7 +546,7 @@
             },
             "type": "array",
             "title": "Favorites",
-            "description": "Любимые разработчики"
+            "description": "Избранные разработчики"
           }
         },
         "type": "object",
@@ -544,12 +562,12 @@
           "login": {
             "type": "string",
             "title": "Login",
-            "description": "Логин аккаунта"
+            "description": "Логин"
           },
           "password": {
             "type": "string",
             "title": "Password",
-            "description": "Пароль аккаунта"
+            "description": "Пароль"
           }
         },
         "type": "object",
@@ -567,7 +585,7 @@
             },
             "type": "array",
             "title": "Commit Diff",
-            "description": "Список разностей между добавленнымыми и удаленными строками коммитов"
+            "description": "Разности между добавленными и удаленными строками коммитов"
           }
         },
         "type": "object",
@@ -621,7 +639,7 @@
             },
             "type": "array",
             "title": "Participants",
-            "description": "Участники команды"
+            "description": "Список участников"
           }
         },
         "type": "object",
@@ -644,12 +662,32 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "Score": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Название компетенции"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score",
+            "description": "Оценка (0-10)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "score"
+        ],
+        "title": "Score"
+      },
       "SearchQuery": {
         "properties": {
           "query": {
             "type": "string",
             "title": "Query",
-            "description": "Строка запроса для поиска пользователей по компетенциям."
+            "description": "Запрос для поиска пользователей по компетенциям"
           }
         },
         "type": "object",
@@ -666,7 +704,7 @@
             },
             "type": "array",
             "title": "Developers",
-            "description": "Массив информации о пользователях"
+            "description": "Информация о найденных пользователях"
           }
         },
         "type": "object",
@@ -675,19 +713,37 @@
         ],
         "title": "SearchResult"
       },
-      "Summary": {
+      "UserCompetencyProfile": {
         "properties": {
-          "summary": {
-            "type": "string",
-            "title": "Summary",
-            "description": "Описание разработчика"
+          "competencies": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/Score"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Competencies",
+            "description": "Категории и соответствующие компетенции с оценками"
+          },
+          "resume": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resume",
+            "description": "Описание компетенций пользователя"
           }
         },
         "type": "object",
         "required": [
-          "summary"
+          "competencies"
         ],
-        "title": "Summary"
+        "title": "UserCompetencyProfile"
       },
       "UserGlobalStat": {
         "properties": {
@@ -696,15 +752,10 @@
             "title": "Username",
             "description": "Имя пользователя на GitHub"
           },
-          "public_repos": {
-            "type": "integer",
-            "title": "Public Repos",
-            "description": "Количество публичных репозиториев"
-          },
           "contributed_repos": {
             "type": "integer",
             "title": "Contributed Repos",
-            "description": "Количество репозиториев, к которым пользователь внес вклад"
+            "description": "Число репозиториев, к которым внесены вклады"
           },
           "commits_total": {
             "type": "integer",
@@ -714,41 +765,30 @@
           "commits_per_day": {
             "type": "number",
             "title": "Commits Per Day",
-            "description": "Среднее количество коммитов в день"
+            "description": "Среднее коммитов в день"
           },
           "commits_per_week": {
             "type": "number",
             "title": "Commits Per Week",
-            "description": "Среднее количество коммитов в неделю"
+            "description": "Среднее коммитов в неделю"
           },
           "commits_per_year": {
             "type": "number",
             "title": "Commits Per Year",
-            "description": "Среднее количество коммитов в год"
+            "description": "Среднее коммитов в год"
           },
           "average_commit_size": {
             "type": "number",
             "title": "Average Commit Size",
             "description": "Средний размер коммита"
           },
-          "languages": {
-            "items": {
-              "additionalProperties": {
-                "type": "integer"
-              },
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Languages",
-            "description": "Используемые языки программирования и количество строчек кода на этом языке"
-          },
           "competencies": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Competencies",
-            "description": "Компетенции, разработчика (направаления разработки)"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserCompetencyProfile"
+              }
+            ],
+            "description": "Компетенции пользователя"
           },
           "using_github_features": {
             "items": {
@@ -756,26 +796,7 @@
             },
             "type": "array",
             "title": "Using Github Features",
-            "description": "Используемые функции GitHub, такие как 'issues' или 'actions'"
-          },
-          "stack": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Stack",
-            "description": "Технологический стек, используемый в проекте (подключаемые либы)"
-          },
-          "score": {
-            "items": {
-              "additionalProperties": {
-                "type": "integer"
-              },
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Score",
-            "description": "Оценки по стеку технологий (от 0 до 10)"
+            "description": "Используемые функции GitHub, напр. 'pull_requests'"
           },
           "prep_repos": {
             "items": {
@@ -783,62 +804,48 @@
             },
             "type": "array",
             "title": "Prep Repos",
-            "description": "Список репозиториев по которым мы имеем статистику в БД"
+            "description": "Список репозиториев со статистикой в БД"
           }
         },
         "type": "object",
         "required": [
           "username",
-          "public_repos",
           "contributed_repos",
           "commits_total",
           "commits_per_day",
           "commits_per_week",
           "commits_per_year",
           "average_commit_size",
-          "languages",
           "competencies",
           "using_github_features",
-          "stack",
-          "score",
           "prep_repos"
         ],
         "title": "UserGlobalStat",
         "example": {
-          "average_commit_size": 120,
-          "commits_per_day": 2,
-          "commits_per_week": 14,
-          "commits_per_year": 730,
+          "average_commit_size": 115,
+          "commits_per_day": 2.5,
+          "commits_per_week": 17.5,
+          "commits_per_year": 910,
           "commits_total": 1000,
-          "competencies": [
-            "backend_development",
-            "devops"
-          ],
+          "competencies": {
+            "backend": [
+              {
+                "name": "Django",
+                "score": 8
+              }
+            ],
+            "devops": [
+              {
+                "name": "Docker",
+                "score": 7
+              }
+            ],
+            "resume": "Experienced in backend and DevOps"
+          },
           "contributed_repos": 20,
-          "languages": [
-            {
-              "Python": 75
-            },
-            {
-              "JavaScript": 25
-            }
-          ],
-          "public_repos": 50,
-          "repositories": [
-            "john/repo1",
+          "prep_repos": [
+            "john_doe/repo1",
             "mark/repo2"
-          ],
-          "score": [
-            {
-              "Django": 5
-            },
-            {
-              "Docker": 10
-            }
-          ],
-          "stack": [
-            "Django",
-            "Docker"
           ],
           "username": "john_doe",
           "using_github_features": [
@@ -864,7 +871,7 @@
               }
             ],
             "title": "Name",
-            "description": "Полное имя пользователя"
+            "description": "Полное имя"
           },
           "email": {
             "anyOf": [
@@ -876,7 +883,7 @@
               }
             ],
             "title": "Email",
-            "description": "Электронная почта пользователя"
+            "description": "Электронная почта"
           },
           "team_projects": {
             "anyOf": [
@@ -888,7 +895,7 @@
               }
             ],
             "title": "Team Projects",
-            "description": "Количество проектов в команде"
+            "description": "Количество командных проектов"
           },
           "solo_projects": {
             "anyOf": [
@@ -924,7 +931,7 @@
               }
             ],
             "title": "Account Age",
-            "description": "Возраст аккаунта"
+            "description": "Возраст аккаунта в годах"
           },
           "avatar_url": {
             "anyOf": [
@@ -936,7 +943,7 @@
               }
             ],
             "title": "Avatar Url",
-            "description": "Ссылка на аватар пользователя"
+            "description": "Ссылка на аватар"
           },
           "html_url": {
             "anyOf": [
@@ -948,7 +955,7 @@
               }
             ],
             "title": "Html Url",
-            "description": "Ссылка на профиль пользователя"
+            "description": "Ссылка на профиль"
           },
           "followers": {
             "anyOf": [
@@ -972,7 +979,7 @@
               }
             ],
             "title": "Following",
-            "description": "Количество отслеживаемых пользователей"
+            "description": "Число отслеживаемых пользователей"
           },
           "repos": {
             "items": {
@@ -980,7 +987,7 @@
             },
             "type": "array",
             "title": "Repos",
-            "description": "Названия всех репозиториев в которые пользователь контрибьютил"
+            "description": "Список репозиториев в формате '{owner}/{repo}'"
           }
         },
         "type": "object",
@@ -997,8 +1004,9 @@
           "following": 50,
           "html_url": "https://github.com/john_doe",
           "name": "John Doe",
-          "repos:": [
-            "jack/repo1, sparrow/repo2"
+          "repos": [
+            "jack/repo1",
+            "sparrow/repo2"
           ],
           "solo_gist": 3,
           "solo_projects": 10,
@@ -1016,31 +1024,12 @@
           "repo_name": {
             "type": "string",
             "title": "Repo Name",
-            "description": "Название репозитория"
+            "description": "Репозиторий в формате '{owner}/{repo}'"
           },
           "repo_html_url": {
             "type": "string",
             "title": "Repo Html Url",
-            "description": "URL-адрес репозитория"
-          },
-          "languages": {
-            "items": {
-              "additionalProperties": {
-                "type": "integer"
-              },
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Languages",
-            "description": "Используемые языки программирования и количество строчек кода на этом языке"
-          },
-          "competencies": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Competencies",
-            "description": "Компетенции, разработчика (направаления разработки)"
+            "description": "URL репозитория"
           },
           "using_github_features": {
             "items": {
@@ -1048,51 +1037,40 @@
             },
             "type": "array",
             "title": "Using Github Features",
-            "description": "Используемые функции GitHub, такие как 'issues' или 'actions'"
-          },
-          "stack": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Stack",
-            "description": "Технологический стек, используемый в проекте (подключаемые либы)"
-          },
-          "score": {
-            "items": {
-              "additionalProperties": {
-                "type": "integer"
-              },
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Score",
-            "description": "Оценки по стеку технологий (от 0 до 10)"
+            "description": "Используемые функции GitHub, напр. 'issues'"
           },
           "commits_total": {
             "type": "integer",
             "title": "Commits Total",
-            "description": "Общее количество коммитов в репозитории"
+            "description": "Общее количество коммитов"
           },
           "commits_per_day": {
             "type": "number",
             "title": "Commits Per Day",
-            "description": "Среднее количество коммитов в день"
+            "description": "Среднее коммитов в день"
           },
           "commits_per_week": {
             "type": "number",
             "title": "Commits Per Week",
-            "description": "Среднее количество коммитов в неделю"
+            "description": "Среднее коммитов в неделю"
           },
           "commits_per_year": {
             "type": "number",
             "title": "Commits Per Year",
-            "description": "Среднее количество коммитов в год"
+            "description": "Среднее коммитов в год"
           },
           "average_commit_size": {
             "type": "number",
             "title": "Average Commit Size",
             "description": "Средний размер коммита"
+          },
+          "competencies": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserCompetencyProfile"
+              }
+            ],
+            "description": "Компетенции разработчика"
           }
         },
         "type": "object",
@@ -1100,52 +1078,38 @@
           "username",
           "repo_name",
           "repo_html_url",
-          "languages",
-          "competencies",
           "using_github_features",
-          "stack",
-          "score",
           "commits_total",
           "commits_per_day",
           "commits_per_week",
           "commits_per_year",
-          "average_commit_size"
+          "average_commit_size",
+          "competencies"
         ],
         "title": "UserRepoStat",
         "example": {
-          "average_commit_size": 100,
-          "commits_per_day": 1,
-          "commits_per_week": 7,
+          "average_commit_size": 120.5,
+          "commits_per_day": 1.5,
+          "commits_per_week": 10.5,
           "commits_per_year": 365,
           "commits_total": 150,
-          "competencies": [
-            "data_analysis",
-            "backend",
-            "frontend",
-            "devops"
-          ],
-          "languages": [
-            {
-              "Python": 900
-            },
-            {
-              "HTML": 1000
-            }
-          ],
+          "competencies": {
+            "backend": [
+              {
+                "name": "FastAPI",
+                "score": 4
+              }
+            ],
+            "frontend": [
+              {
+                "name": "SVG",
+                "score": 8
+              }
+            ],
+            "resume": "Backend developer with expertise in Python"
+          },
           "repo_html_url": "https://github.com/john_doe/sample_repo",
           "repo_name": "john_doe/sample_repo",
-          "score": [
-            {
-              "FastAPI": 4
-            },
-            {
-              "Pandas": 10
-            }
-          ],
-          "stack": [
-            "FastAPI",
-            "Pandas"
-          ],
           "username": "john_doe",
           "using_github_features": [
             "actions",

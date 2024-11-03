@@ -1,6 +1,5 @@
 from app.storage.crud.repo_stats import read_repo_stat_by_username, read_repo_stat, repo_stat_exists, create_repo_stat
-from app.models.models import RepoStat
-from app.schemas.schema import UserGlobalStat, ActivityList
+from app.schemas.schema import UserGlobalStat, ActivityList, UserRepoStat
 from app.services.github_utils import check_user_actions, check_user_projects, check_user_commit_comments, check_user_commits, check_user_issues, check_user_issue_comments, check_user_pull_request_comments, check_user_pull_requests, check_user_releases
 from app.services.user_service import fetch_user_info
 import git
@@ -9,31 +8,36 @@ import httpx
 from typing import List, Dict, Tuple
 import datetime
 import os
-async def fetch_repo_stat(username: str, owner: str, repo: str, token: str, target: str) -> RepoStat:
+from fastapi import HTTPException
+
+async def fetch_repo_stat(username: str, owner: str, repo: str, token: str, target: str) -> UserRepoStat:
     """
-    Retrieve a repository's statistics from the cache or GitHub API.
+    Получение статистики репозитория из кэша или GitHub API.
 
     Args:
-        username (str): The username of the repository owner.
-        owner (str): The owner of the repository.
-        repo (str): The name of the repository.
-        token (str): The GitHub API access token.
+        username (str): Имя пользователя на GitHub.
+        owner (str): Владелец репозитория.
+        repo (str): Название репозитория.
+        token (str): Токен доступа к GitHub API.
 
     Returns:
-        RepoStat: The repository's statistics.
+        RepoStat: Статистика репозитория.
     """
-    repo_name = f"{owner}/{repo}"
-    if await repo_stat_exists(username, repo_name):
-        return await read_repo_stat(username, repo_name)
-    if target == 'local':
+    repo_full_name = f"{owner}/{repo}"
+    if await repo_stat_exists(username, repo_full_name):
+        return await read_repo_stat(username, repo_full_name)
+
+    if target == "local":
         repo_stat = await get_local_repo_stat(username, owner, repo, token)
-        await create_repo_stat(repo_stat)
-    if target == 'github':
+    elif target == "github":
         repo_stat = await get_github_repo_stat(username, owner, repo, token)
-        await create_repo_stat(repo_stat)
+    else:
+        raise ValueError(f"Invalid target: {target}")
+
+    await create_repo_stat(repo_stat)
     return repo_stat
 
-async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
+async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) -> UserRepoStat:
     """
     Retrieve a repository's statistics from the local Git repository.
 
@@ -44,22 +48,20 @@ async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) 
         token (str): The GitHub API access token (not used here).
 
     Returns:
-        RepoStat: The repository's statistics.
+        UserRepoStat: The repository's statistics.
     """
-    repo_stat = RepoStat(
+    repo_stat = UserRepoStat(
         username=username,
         repo_name=f"{owner}/{repo}",
         repo_html_url=f"https://github.com/{owner}/{repo}",
-        languages=[],
-        competencies=[],
         using_github_features=[],
-        stack=[],
-        score=[],
         commits_total=0,
-        commits_per_day=0,
+        commits_per_day=0,  
         commits_per_week=0,
         commits_per_year=0,
-        average_commit_size=0
+        average_commit_size=0,
+        competencies={},
+        resume=""
     )
 
     local_repo = None
@@ -81,17 +83,22 @@ async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) 
     name = user_info.name
     mail = user_info.email
     
+    author_name = username
     # Try different author search criteria
-    author_commits = list(local_repo.iter_commits(author=username))
+    author_commits = list(local_repo.iter_commits(author=author_name))
     if not author_commits:
-        author_commits = list(local_repo.iter_commits(author=name))  # Substitute with known email if available
+        author_name = name
+        author_commits = list(local_repo.iter_commits(author=author_name))  # Substitute with known email if available
     if not author_commits:
-        author_commits = list(local_repo.iter_commits(author=mail))  # Try first name or other known name info
-    
-    
+        author_name = mail
+        author_commits = list(local_repo.iter_commits(author=author_name))  # Try first name or other known name info
+    if not author_commits:
+        raise HTTPException(status_code=404, detail="Commits author not found")
+        
     # Calculate commit statistics
     repo_stat.commits_total, repo_stat.commits_per_day, repo_stat.commits_per_week, repo_stat.commits_per_year, repo_stat.average_commit_size = await get_local_commit_stat(author_commits)
     repo_stat.using_github_features = await get_used_github_features(username, owner, repo, token)
+    repo_stat.competencies = await get_competencies(repo_path, author_name)
     
     return repo_stat
 
@@ -127,7 +134,7 @@ async def get_local_commit_stat(commits) -> Tuple[int, float, float, float, floa
     return commit_count, commits_per_day, commits_per_week, commits_per_year, avg_commit_size
 
 
-async def fetch_actualize_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
+async def fetch_actualize_stat(username: str, owner: str, repo: str, token: str) -> UserRepoStat:
     """
     Retrieve a repository's statistics from the GitHub API.
 
@@ -138,7 +145,7 @@ async def fetch_actualize_stat(username: str, owner: str, repo: str, token: str)
         token (str): The GitHub API access token.
 
     Returns:
-        RepoStat: The repository's statistics.
+        UserRepoStat: The repository's statistics.
     """
     repo_stat = await get_github_repo_stat(username, owner, repo, token)
     await create_repo_stat(repo_stat)
@@ -199,7 +206,7 @@ async def fetch_global_stat(username: str, token: str) -> UserGlobalStat:
     
     return global_stat
     
-async def get_github_repo_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
+async def get_github_repo_stat(username: str, owner: str, repo: str, token: str) -> UserRepoStat:
     """
     Retrieve a repository's statistics from the GitHub API.
 
@@ -210,9 +217,9 @@ async def get_github_repo_stat(username: str, owner: str, repo: str, token: str)
         token (str): The GitHub API access token.
 
     Returns:
-        RepoStat: The repository's statistics.
+        UserRepoStat: The repository's statistics.
     """
-    repo_stat = RepoStat(
+    repo_stat = UserRepoStat(
         username=username,
         repo_name=f"{owner}/{repo}",
         repo_html_url=f"https://github.com/{owner}/{repo}",

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.schemas.schema import (
-    UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult,
+    UserRepoStat, UserGlobalStat, UserInfo, SearchResult,
     AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList
 )
 from app.services.repo_service import (

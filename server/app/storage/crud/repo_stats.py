@@ -1,4 +1,4 @@
-from app.models.models import RepoStat
+from app.schemas.schema import UserRepoStat
 from bson.objectid import ObjectId
 from ..storage import repo_stat_collection
 from typing import List
@@ -9,7 +9,7 @@ async def repo_stat_exists(username: str, repo_name: str) -> bool:
     )
 
 # Создать пользователя
-async def create_repo_stat(repo_stat_data: RepoStat) -> RepoStat:
+async def create_repo_stat(repo_stat_data: UserRepoStat) -> UserRepoStat:
     if await repo_stat_exists(repo_stat_data.username, repo_stat_data.repo_name):
         return await update_repo_stat(repo_stat_data)
     else:
@@ -19,24 +19,24 @@ async def create_repo_stat(repo_stat_data: RepoStat) -> RepoStat:
         return None
 
 # Прочитать пользователя
-async def read_repo_stat(username: str, repo_name: str) -> RepoStat:
+async def read_repo_stat(username: str, repo_name: str) -> UserRepoStat:
     repo_stat = await repo_stat_collection.find_one({"username": username, "repo_name": repo_name})
-    return RepoStat(**repo_stat) if repo_stat else None
+    return UserRepoStat(**repo_stat) if repo_stat else None
 
 # Прочитать пользователя
-async def read_repo_stat_by_username(username: str) -> List[RepoStat]:
+async def read_repo_stat_by_username(username: str) -> List[UserRepoStat]:
     cursor = repo_stat_collection.find({"username": username})
     repo_stats = await cursor.to_list(length=None)
-    return [RepoStat(**repo_stat) for repo_stat in repo_stats]
+    return [UserRepoStat(**repo_stat) for repo_stat in repo_stats]
 
 # Прочитать пользователя
-async def read_repo_stat_by_repo_name(repo_name: str) -> List[RepoStat]:
+async def read_repo_stat_by_repo_name(repo_name: str) -> List[UserRepoStat]:
     repo_stats = await repo_stat_collection.find({"repo_name": repo_name})
-    return [RepoStat(**repo_stat) for repo_stat in repo_stats]
+    return [UserRepoStat(**repo_stat) for repo_stat in repo_stats]
 
 
 # Обновить пользователя
-async def update_repo_stat(repo_stat_data: RepoStat) -> RepoStat:
+async def update_repo_stat(repo_stat_data: UserRepoStat) -> UserRepoStat:
     update_result = await repo_stat_collection.update_one(
         {
             "username": repo_stat_data.username,
@@ -51,9 +51,9 @@ async def update_repo_stat(repo_stat_data: RepoStat) -> RepoStat:
     return None
 
 # Удалить пользователя
-async def delete_repo_stat(username: str, repo_name: str) -> RepoStat:
+async def delete_repo_stat(username: str, repo_name: str) -> UserRepoStat:
     res = await repo_stat_collection.delete_many({"username": username})
     if res.deleted_count:
-        return RepoStat(username=username, repo_name=repo_name)
+        return UserRepoStat(username=username, repo_name=repo_name)
     return None
 

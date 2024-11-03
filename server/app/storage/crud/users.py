@@ -1,4 +1,4 @@
-from app.models.models import UserInfo
+from app.schemas.schema import UserInfo
 from bson.objectid import ObjectId
 from ..storage import user_collection
 from typing import List, Optional
