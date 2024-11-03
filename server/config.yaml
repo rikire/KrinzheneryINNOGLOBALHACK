@@ -1,1 +1,2 @@
 github_token: "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"
+MONGO_DETAILS: "mongodb://localhost:27017"
