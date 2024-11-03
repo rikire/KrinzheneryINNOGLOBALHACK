@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field 
 from typing import Optional, List, Dict
+from datetime import datetime
 
 
 class Score(BaseModel):
@@ -141,6 +142,12 @@ class SearchQuery(BaseModel):
 class SearchResult(BaseModel):
     developers: List[UserInfo] = Field(..., description="Информация о найденных пользователях")
 
+class CommitInfo(BaseModel):
+    additions: int = Field(..., description="Добавленные строки")
+    deletions: int = Field(..., description="Удаленные строки")
+    commit_date: datetime = Field(..., description="Дата коммита")
+    commit_message: str = Field(..., description="Сообщение коммита")
+
 class ActivityList(BaseModel):
-    commit_diff: List[int] = Field(..., description="Разности между добавленными и удаленными строками коммитов")
+    commits: List[CommitInfo] = Field(..., description="Описания коммитов")
 
