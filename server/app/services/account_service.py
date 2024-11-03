@@ -41,9 +41,11 @@ async def add_command(login: str, command: CommandInfo):
     else:
         acc.command_list.append(command_obj)
         update_account(login, acc)
-        return CommandInfo(
-            command_name=command.command_name,
-            participants=command.participants
+        return AccountInfo(
+            login=acc.login,
+            password=acc.password,
+            command_list=acc.command_list,
+            favorites=acc.favorites
         )
 
 async def remove_command(login: str, command: CommandInfo):
@@ -57,8 +59,10 @@ async def remove_command(login: str, command: CommandInfo):
     else:
         acc.command_list.remove(command_obj)
         update_account(login, acc)
-        return CommandInfo(
-            command_name=command.command_name,
-            participants=command.participants
+        return AccountInfo(
+            login=acc.login,
+            password=acc.password,
+            command_list=acc.command_list,
+            favorites=acc.favorites
         )
             

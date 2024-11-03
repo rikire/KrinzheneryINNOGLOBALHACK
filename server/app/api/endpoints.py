@@ -172,7 +172,7 @@ async def post_login_acc(cred: AccountRegister):
 
 @router.post(
     "/command",
-    response_model=CommandInfo,
+    response_model=AccountInfo,
     summary="Добавление команды к аккаунту",
     description="Добавляет команду к учетной записи пользователя."
 )
@@ -196,7 +196,7 @@ async def post_command(querry: CommandQuerry):
 
 @router.post(
     "/command/delete",
-    response_model=CommandInfo,
+    response_model=AccountInfo,
     summary="Удаление команды из аккаунта",
     description="Удаляет команду из учетной записи пользователя."
 )
