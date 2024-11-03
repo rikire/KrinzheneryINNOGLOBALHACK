@@ -112,7 +112,7 @@ import requests
 
 async def fetch_user_soft_skills(username, token):    
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(f"https://api.github.com/search/issues?q=author:{username}+is:issue&per_page=50&page=0", headers=headers)
+    response = requests.get(f"https://api.github.com/search/issues?q=author:{username}+is:issue&per_page=10&page=0", headers=headers)
     
     if response.status_code != 200:
         return response
