@@ -1,6 +1,8 @@
 from app.storage.crud.repo_stats import read_repo_stat_by_username, read_repo_stat, repo_stat_exists, create_repo_stat
 from app.models.models import RepoStat
 from app.schemas.schema import UserGlobalStat
+from app.services.github_utils import check_user_actions, check_user_projects, check_user_commit_comments, check_user_commits, check_user_issues, check_user_issue_comments, check_user_pull_request_comments, check_user_pull_requests, check_user_releases
+
 import asyncio
 import httpx
 from typing import List, Dict
@@ -167,60 +169,20 @@ async def get_commits(username: str, owner: str, repo: str, token: str) -> List[
     return all_commits
 
 async def get_used_github_features(username: str, owner: str, repo: str, token: str) -> List[str]:
-    """Fetches a list of GitHub features used by the given username in the given repo."""
-
-    features = {
-        "issues": False,
-        "pull_requests": False,
-        "commits": False,
-        "discussions": False,
-        "projects": False,
-        "wiki": False,
-        "actions": False,
-        "releases": False,
+    feature_map = {
+        "issues": await check_user_issues(owner, repo, username, token),
+        "pull_requests": await check_user_pull_requests(owner, repo, username, token),
+        "commits": await check_user_commits(owner, repo, username, token),
+        "projects": await check_user_projects(owner, repo, username, token),
+        "actions": await check_user_actions(owner, repo, username, token),
+        "releases": await check_user_releases(owner, repo, username, token),
+        "issue_comments": await check_user_issue_comments(owner, repo, username, token),
+        "pull_request_comments": await check_user_pull_request_comments(owner, repo, username, token),
+        "commit_comments": await check_user_commit_comments(owner, repo, username, token)
     }
 
-    urls = {
-        "issues": f"https://api.github.com/repos/{owner}/{repo}/issues",
-        "pull_requests": f"https://api.github.com/repos/{owner}/{repo}/pulls",
-        "commits": f"https://api.github.com/repos/{owner}/{repo}/commits",
-        "discussions": f"https://api.github.com/repos/{owner}/{repo}/discussions",
-        "projects": f"https://api.github.com/repos/{owner}/{repo}/projects",
-        "actions": f"https://api.github.com/repos/{owner}/{repo}/actions",
-        "releases": f"https://api.github.com/repos/{owner}/{repo}/releases",
-    }
-
-    async with httpx.AsyncClient() as client:
-        responses = await asyncio.gather(
-            *(fetch_github_data(client=client, url=url, headers={"Authorization": f"token {token}"}) for url in urls.values()),
-            return_exceptions=True,
-        )
-        for response, feature_key in zip(responses, features.keys()):
-            if isinstance(response, Exception):
-                continue
-            if response.status_code != 200:
-                continue
-
-            data = response.json()
-            if not data:
-                continue
-
-            # Check if the username is associated with each feature
-            match feature_key:
-                case "issues" | "pull_requests" | "discussions" | "projects" | "releases":
-                    for item in data:
-                        if item.get("user", {}).get("login", "").lower() == username.lower():
-                            features[feature_key] = True
-                            break
-                case "commits":
-                    for commit in data:
-                        if commit.get("author", {}).get("name", "").lower() == username.lower():
-                            features["commits"] = True
-                            break
-                case "actions":
-                    features["actions"] = bool(data)
-
-    return [feature for feature, used in features.items() if used]
+    feature_list = [feature for feature, has_feature in feature_map.items() if has_feature]
+    return feature_list
 
 async def get_commit_stat(commits):
     """Calculate various commit statistics from a list of commits."""
