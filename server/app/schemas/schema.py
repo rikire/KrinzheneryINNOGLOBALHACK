@@ -154,3 +154,11 @@ class ActivityList(BaseModel):
 class CommandQuerry(BaseModel):
     login: str = Field(..., description="Логин")
     command: CommandInfo = Field(..., description="Команда")
+
+class FavoriteQuerry(BaseModel):
+    login: str = Field(..., description="Логин")
+    target: str = Field(..., description="Пользователь для добавления в список любимчиков")
+
+class FavoriteListQuerry(BaseModel):
+    login: str = Field(..., description="Логин")
+    favorites :List[str] = Field(..., description="Избранные разработчики")

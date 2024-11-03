@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from app.schemas.schema import (
     UserRepoStat, UserGlobalStat, UserInfo, SearchResult,
-    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList, CommandQuerry
+    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList, CommandQuerry, FavoriteQuerry, FavoriteListQuerry
 )
 from app.services.repo_service import (
     fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
@@ -9,7 +9,7 @@ from app.services.repo_service import (
 from app.services.user_service import fetch_user_info
 from app.services.search_service import fetch_search
 from app.services.account_service import (
-    create_acc, login_acc, add_command, remove_command
+    create_acc, login_acc, add_command, remove_command, add_favorite, remove_favorite, update_favorites
 )
 from app.storage.crud.repo_stats import (
     delete_repo_stat
@@ -217,6 +217,33 @@ async def post_command_del(querry: CommandQuerry):
         Информация об удаленной команде.
     """
     return await remove_command(querry.login, querry.command)
+
+@router.post(
+    "/favorite",
+    response_model=AccountInfo,
+    summary="Добавляет пользователя в либимчики",
+    description="Добавляет пользователя в либимчики"
+)
+async def post_add_favorite(querry: FavoriteQuerry):
+    return await add_favorite(querry)
+
+@router.post(
+    "/favorite/update",
+    response_model=AccountInfo,
+    summary="Изменяет список любимчиков",
+    description="Изменяет список любимчиков"
+)
+async def post_add_favorite(querry: FavoriteQuerry):
+    return await update_favorites(querry)
+
+@router.post(
+    "/favorite/delete",
+    response_model=AccountInfo,
+    summary="Удаляет пользователя из любимчиков",
+    description="Удаляет пользователя из любимчиков"
+)
+async def post_add_favorite(querry: FavoriteQuerry):
+    return await remove_favorite(querry)
 
 @router.post(
     "/search",
