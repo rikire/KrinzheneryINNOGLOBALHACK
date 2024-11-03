@@ -218,17 +218,17 @@
   margin-top: 14px;
 }
 
+.Divider {
+  width: 100%;
+  height: 1px;
+  border-radius: 1px;
+  background-color: #ff4d4f;
+  margin-top: 20px;
+  margin-bottom: 18px;
+}
+
 .DeveloperCV {
   padding: 22px;
-
-  &-Divider {
-    width: 100%;
-    height: 1px;
-    border-radius: 1px;
-    background-color: #ff4d4f;
-    margin-top: 20px;
-    margin-bottom: 18px;
-  }
 
   &-Scores {
     padding-top: 36px;
@@ -288,10 +288,14 @@
     text-wrap: nowrap;
   }
 
-  &-Charts {
+  &-DoughnatCharts {
     display: flex;
     justify-content: space-between;
     gap: 20px;
+    margin-top: 30px;
+  }
+
+  &-CandlesChart {
     margin-top: 30px;
   }
 
@@ -370,6 +374,7 @@
     }
 
     &-Stats {
+      text-align: end;
       margin-top: 12px;
     }
 

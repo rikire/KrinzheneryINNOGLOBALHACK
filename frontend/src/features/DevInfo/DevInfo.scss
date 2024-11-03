@@ -20,3 +20,16 @@
 .AddToFavoritesButton_active path {
   fill: #ff4d4f;
 }
+
+.DevFullCard {
+  padding: 22px;
+
+  &-Header {
+    display: flex;
+    gap: 25px;
+  }
+
+  &-HeaderStats {
+    flex: 1;
+  }
+}
