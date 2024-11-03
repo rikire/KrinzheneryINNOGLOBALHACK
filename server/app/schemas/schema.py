@@ -151,3 +151,6 @@ class CommitInfo(BaseModel):
 class ActivityList(BaseModel):
     commits: List[CommitInfo] = Field(..., description="Описания коммитов")
 
+class CommandQuerry(BaseModel):
+    login: str = Field(..., description="Логин")
+    command: CommandInfo = Field(..., description="Команда")

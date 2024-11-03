@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from app.schemas.schema import (
     UserRepoStat, UserGlobalStat, UserInfo, SearchResult,
-    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList
+    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList, CommandQuerry
 )
 from app.services.repo_service import (
     fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
@@ -176,7 +176,7 @@ async def post_login_acc(cred: AccountRegister):
     summary="Добавление команды к аккаунту",
     description="Добавляет команду к учетной записи пользователя."
 )
-async def post_command(login: str, command: CommandInfo):
+async def post_command(querry: CommandQuerry):
     """
     Добавляет команду к учетной записи пользователя.
 
@@ -192,7 +192,7 @@ async def post_command(login: str, command: CommandInfo):
     CommandInfo
         Информация о добавленной команде.
     """
-    return await add_command(login, command)
+    return await add_command(querry.login, querry.command)
 
 @router.post(
     "/command/delete",
@@ -200,7 +200,7 @@ async def post_command(login: str, command: CommandInfo):
     summary="Удаление команды из аккаунта",
     description="Удаляет команду из учетной записи пользователя."
 )
-async def post_command_del(login: str, command: CommandInfo):
+async def post_command_del(querry: CommandQuerry):
     """
     Удаляет команду из учетной записи пользователя.
 
@@ -216,7 +216,7 @@ async def post_command_del(login: str, command: CommandInfo):
     CommandInfo
         Информация об удаленной команде.
     """
-    return await remove_command(login, command)
+    return await remove_command(querry.login, querry.command)
 
 @router.post(
     "/search",

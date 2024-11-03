@@ -1,4 +1,4 @@
-from app.schemas.schema import AccountInfo, AccountRegister, CommandInfo
+from app.schemas.schema import AccountInfo, AccountRegister, CommandInfo, CommandQuerry
 from app.models.models import Account, Command
 from app.storage.crud.accounts import create_account, get_account, update_account
 
