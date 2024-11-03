@@ -12,15 +12,23 @@ import {
 
 export const backendApi = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }), // Укажите базовый URL
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://0.0.0.0:8000/' }), // Укажите базовый URL
   endpoints: (builder) => ({
     // Получение статистики репозитория
-    getRepoStat: builder.query<UserRepoStat, { username: string; owner: string; repo: string }>({
-      query: ({ username, owner, repo }) => `/stat/${username}/${owner}/${repo}`,
+    getRepoStat: builder.query<
+      UserRepoStat,
+      { username: string; owner: string; repo: string }
+    >({
+      query: ({ username, owner, repo }) =>
+        `/stat/${username}/${owner}/${repo}`,
     }),
     // Актуализация статистики репозитория
-    actualizeRepoStat: builder.query<UserRepoStat, { username: string; owner: string; repo: string }>({
-      query: ({ username, owner, repo }) => `/actualize_stat/${username}/${owner}/${repo}`,
+    actualizeRepoStat: builder.query<
+      UserRepoStat,
+      { username: string; owner: string; repo: string }
+    >({
+      query: ({ username, owner, repo }) =>
+        `/actualize_stat/${username}/${owner}/${repo}`,
     }),
     // Глобальная статистика пользователя
     getGlobalStat: builder.query<UserGlobalStat, { username: string }>({

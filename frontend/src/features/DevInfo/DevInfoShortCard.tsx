@@ -1,3 +1,5 @@
+import { useGetUserInfoQuery } from '../../store/backend/api';
+import { UserInfo } from '../../types';
 import { Avatar } from './DevInfo.components/Avatar';
 import { DevCompetencies } from './DevInfo.components/DevCompetencies';
 import { DevCounts } from './DevInfo.components/DevCounts';
@@ -20,27 +22,64 @@ const defaultProps = {
 };
 
 // TODO - убрать дефолтные пропсы
-export const DevInfoShortCard = () => {
-  const props = defaultProps;
-  console.log(props);
+export const DevInfoShortCard = ({ username = 'Ten-Do' }) => {
+  const { data, isLoading, isError } = useGetUserInfoQuery({
+    username: 'Ten-Do',
+  });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Всё. Тю - Тю...</div>;
+  }
   return (
     <div className="DevInfoShortCard Card">
-      <Avatar avatarURL={props.avatarURL} />
+      <Avatar avatarURL={data?.avatar_url} />
       <div className="DevInfoShortCard-Info">
         <DevTitle
-          username={props.username}
-          name={props.name}
-          accountAge={props.accountAge}
+          username={username}
+          name={data?.name}
+          accountAge={data?.account_age}
         />
         <DevCounts
-          countTeamProjects={props.countTeamProjects}
-          countSoloProjects={props.countSoloProjects}
+          countTeamProjects={data?.team_projects}
+          countSoloProjects={data?.solo_projects}
         />
       </div>
       <div className="DevInfoShortCard-Stats">
-        <DevCompetencies competencies={props.competencies} />
-        <DevStack stack={props.stack} />
+        <DevCompetencies competencies={defaultProps.competencies} />
+        <DevStack stack={defaultProps.stack} />
       </div>
     </div>
   );
 };
+
+const data: UserInfo = {
+  username: 'Ten-Do',
+  name: null,
+  email: null,
+  team_projects: 0,
+  solo_projects: 13,
+  solo_gist: 0,
+  account_age: 2,
+  avatar_url: 'https://avatars.githubusercontent.com/u/107281193?v=4',
+  html_url: 'https://github.com/Ten-Do',
+  followers: 0,
+  following: 0,
+  repos: [
+    'Ten-Do/B2P',
+    'Ten-Do/B2P_admin',
+    'Ten-Do/B2P_S',
+    'Ten-Do/ctf_admin',
+    'Ten-Do/cyberpolygon_client',
+    'Ten-Do/EBUS',
+    'Ten-Do/EBUS_edrive',
+    'Ten-Do/ebus_emap',
+    'Ten-Do/hackich',
+    'Ten-Do/MAGHACK',
+    'Ten-Do/ToDoList',
+    'Ten-Do/trsis-3',
+    'Ten-Do/ymap3-components',
+  ],
+};
+console.log(data);
