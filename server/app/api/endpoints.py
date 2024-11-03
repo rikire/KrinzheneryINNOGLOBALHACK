@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from app.schemas.schema import (
     UserRepoStat, UserGlobalStat, UserInfo, SearchResult,
     AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList
@@ -14,7 +14,9 @@ from app.services.account_service import (
 from app.storage.crud.repo_stats import (
     delete_repo_stat
 )
+from app.storage.crud.users import delete_user
 import yaml
+
 
 router = APIRouter()
 
@@ -330,3 +332,26 @@ async def delete_repo(username: str, owner: str, repo: str):
     return await delete_repo_stat(username, f"{owner}/{repo}")
 
 
+@router.delete(
+    "/delete_user_info/{username}",
+    summary="Удаление информации о пользователе из БД",
+    description="Удаляет информацию о пользователе из БД."
+)
+async def delete_user_info(username: str):
+    """
+    Удаляет информацию о пользователе из БД.
+
+    Parameters
+    ----------
+    username : str
+        Имя пользователя на GitHub.
+
+    Returns
+    -------
+    UserInfo
+        Удаленная информация о пользователе.
+    """
+    res = await delete_user(username)
+    if res != None:
+        return status.HTTP_200_OK
+    return status.HTTP_404_NOT_FOUND
