@@ -1,5 +1,5 @@
 from app.storage.crud.repo_stats import read_repo_stat_by_username, read_repo_stat, repo_stat_exists, create_repo_stat
-from app.schemas.schema import UserGlobalStat, ActivityList, UserRepoStat
+from app.schemas.schema import UserGlobalStat, ActivityList, UserRepoStat, UserCompetencyProfile
 from app.services.github_utils import check_user_actions, check_user_projects, check_user_commit_comments, check_user_commits, check_user_issues, check_user_issue_comments, check_user_pull_request_comments, check_user_pull_requests, check_user_releases
 from app.services.user_service import fetch_user_info
 import git
@@ -9,6 +9,7 @@ from typing import List, Dict, Tuple
 import datetime
 import os
 from fastapi import HTTPException
+from collections import defaultdict
 
 async def fetch_repo_stat(username: str, owner: str, repo: str, token: str, target: str) -> UserRepoStat:
     """
@@ -39,30 +40,17 @@ async def fetch_repo_stat(username: str, owner: str, repo: str, token: str, targ
 
 async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) -> UserRepoStat:
     """
-    Retrieve a repository's statistics from the local Git repository.
+    Получение статистики репозитория из локального Git репозитория.
 
     Args:
-        username (str): The username of the repository owner.
-        owner (str): The owner of the repository.
-        repo (str): The name of the repository.
-        token (str): The GitHub API access token (not used here).
+        username (str): Имя пользователя на GitHub.
+        owner (str): Владелец репозитория.
+        repo (str): Название репозитория.
+        token (str): Токен доступа к GitHub API (здесь не используется).
 
     Returns:
-        UserRepoStat: The repository's statistics.
+        UserRepoStat: Статистика репозитория.
     """
-    repo_stat = UserRepoStat(
-        username=username,
-        repo_name=f"{owner}/{repo}",
-        repo_html_url=f"https://github.com/{owner}/{repo}",
-        using_github_features=[],
-        commits_total=0,
-        commits_per_day=0,  
-        commits_per_week=0,
-        commits_per_year=0,
-        average_commit_size=0,
-        competencies={},
-        resume=""
-    )
 
     local_repo = None
     repo_path = f"./dataset/{repo}"
@@ -74,41 +62,57 @@ async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) 
     except git.exc.NoSuchPathError:
         gitclone = git.Repo.clone_from(f"https://github.com/{owner}/{repo}.git", repo_path)
         if gitclone is None:
-            raise Exception(f"Failed to clone repository {owner}/{repo}.")
+            raise Exception(f"Не удалось клонировать репозиторий {owner}/{repo}.")
         local_repo = git.Repo(repo_path)
     
-    # Fetch the author’s commits
+    # Получение коммитов автора
     # name, mail, username
     user_info = await fetch_user_info(username=username, token=token)
     name = user_info.name
     mail = user_info.email
     
     author_name = username
-    # Try different author search criteria
+    # Пробуем различные критерии поиска автора
     author_commits = list(local_repo.iter_commits(author=author_name))
     if not author_commits:
         author_name = name
-        author_commits = list(local_repo.iter_commits(author=author_name))  # Substitute with known email if available
+        author_commits = list(local_repo.iter_commits(author=author_name))
     if not author_commits:
         author_name = mail
-        author_commits = list(local_repo.iter_commits(author=author_name))  # Try first name or other known name info
+        author_commits = list(local_repo.iter_commits(author=author_name))
     if not author_commits:
-        raise HTTPException(status_code=404, detail="Commits author not found")
-        
-    # Calculate commit statistics
+        raise HTTPException(status_code=404, detail="Автор коммитов не найден")
+    
+    repo_stat = UserRepoStat(
+        username=username,
+        repo_name=f"{owner}/{repo}",
+        repo_html_url=f"https://github.com/{owner}/{repo}",
+        using_github_features=[],
+        commits_total=0,
+        commits_per_day=0,  
+        commits_per_week=0,
+        commits_per_year=0,
+        average_commit_size=0,
+        competencies = None
+    )
+
+    # Вычисление статистики коммитов
     repo_stat.commits_total, repo_stat.commits_per_day, repo_stat.commits_per_week, repo_stat.commits_per_year, repo_stat.average_commit_size = await get_local_commit_stat(author_commits)
     repo_stat.using_github_features = await get_used_github_features(username, owner, repo, token)
     repo_stat.competencies = await get_competencies(repo_path, author_name)
     
     return repo_stat
 
+async def get_competencies(repo_path, author_name):
+    return None
+
 async def get_local_commit_stat(commits) -> Tuple[int, float, float, float, float]:
-    """Calculate various commit statistics from a list of commits."""
+    """Расчет статистики коммитов из списка коммитов."""
     commit_count = 0
     total_changes = 0
     first_commit, last_commit = None, None
 
-    # Process commits and gather stats
+    # Обработка коммитов и сбор статистики
     for commit in commits:
         commit_count += 1
         commit_date = commit.committed_datetime
@@ -122,13 +126,13 @@ async def get_local_commit_stat(commits) -> Tuple[int, float, float, float, floa
     if commit_count == 0:
         return 0, 0, 0, 0, 0
 
-    # Time range calculations
-    days_diff = max((last_commit - first_commit).days, 1)  # Avoid division by zero
+    # Расчеты с использованием интервала времени
+    days_diff = max((last_commit - first_commit).days, 1)  # Чтобы избежать деления на ноль
     commits_per_day = commit_count / days_diff
     commits_per_week = commits_per_day * 7
     commits_per_year = commits_per_day * 365
 
-    # Average commit size
+    # Средний размер коммита
     avg_commit_size = total_changes / commit_count
 
     return commit_count, commits_per_day, commits_per_week, commits_per_year, avg_commit_size
@@ -136,88 +140,105 @@ async def get_local_commit_stat(commits) -> Tuple[int, float, float, float, floa
 
 async def fetch_actualize_stat(username: str, owner: str, repo: str, token: str) -> UserRepoStat:
     """
-    Retrieve a repository's statistics from the GitHub API.
+    Получение статистики репозитория из GitHub API.
 
-    Args:
-        username (str): The username of the repository owner.
-        owner (str): The owner of the repository.
-        repo (str): The name of the repository.
-        token (str): The GitHub API access token.
+    Параметры:
+        username (str): Имя пользователя на GitHub.
+        owner (str): Владелец репозитория.
+        repo (str): Название репозитория.
+        token (str): Токен доступа к GitHub API.
 
-    Returns:
-        UserRepoStat: The repository's statistics.
+    Возвращает:
+        UserRepoStat: Статистика репозитория.
     """
     repo_stat = await get_github_repo_stat(username, owner, repo, token)
     await create_repo_stat(repo_stat)
     return repo_stat
-    
+
+
+# Функция для получения глобальной статистики
 async def fetch_global_stat(username: str, token: str) -> UserGlobalStat:
     repos = await read_repo_stat_by_username(username)
     
     global_stat = UserGlobalStat(
         username=username,
-        public_repos=0,
         contributed_repos=0,
         commits_total=0,
         commits_per_day=0,
         commits_per_week=0,
         commits_per_year=0,
         average_commit_size=0,
-        languages=[],
-        competencies=[],
+        competencies=UserCompetencyProfile(competencies={}, resume=None),  # Исправлено здесь
         using_github_features=[],
-        stack=[],
-        score=[],
         prep_repos=[]
     )
     
-    languages=set()
-    competencies=set()
-    using_github_features=set()
-    stack=set()
-    score=set()
-    
+    competencies = defaultdict(list)
+    using_github_features = set()
+    prep_repos = set()
+        
     for repo in repos:
-        global_stat.public_repos += 1
-        if username.lower() in repo.repo_name.lower():
-            global_stat.public_repos += 1
+        global_stat.contributed_repos += 1
         global_stat.commits_total += repo.commits_total
         global_stat.commits_per_day += repo.commits_per_day
         global_stat.commits_per_week += repo.commits_per_week
         global_stat.commits_per_year += repo.commits_per_year
         global_stat.average_commit_size += repo.average_commit_size
-        languages.update(repo.languages)
-        competencies.update(repo.competencies)
+        
+        if repo.competencies != None:
+            for category, scores in repo.competencies.competencies.items():
+                competencies[category].extend(scores)
         using_github_features.update(repo.using_github_features)
-        stack.update(repo.stack)
-        score.update(repo.score)
-        global_stat.prep_repos.append(repo.repo_name)
+        prep_repos.add(repo.repo_name)
 
-    global_stat.languages = list(languages)
-    global_stat.competencies = list(competencies)
+    global_stat.competencies = UserCompetencyProfile(
+        competencies=dict(competencies),
+        resume=None  # Здесь можно добавить логику для объединения резюме, если это необходимо
+    )
     global_stat.using_github_features = list(using_github_features)
-    global_stat.stack = list(stack)
-    global_stat.score = list(score)
+    global_stat.prep_repos = list(prep_repos)
     
-    global_stat.commits_per_day /= len(repos)
-    global_stat.commits_per_week /= len(repos)
-    global_stat.commits_per_year /= len(repos)
-    global_stat.average_commit_size /= len(repos)
+    if repos:
+        global_stat.commits_per_day /= len(repos)
+        global_stat.commits_per_week /= len(repos)
+        global_stat.commits_per_year /= len(repos)
+        global_stat.average_commit_size /= len(repos)
     
     return global_stat
-    
+
+# Функция для объединения профилей компетенций
+async def merge_user_competency_profiles(profiles: List[UserCompetencyProfile]) -> UserCompetencyProfile:
+    merged_competencies = defaultdict(list)
+    resume_texts = []
+
+    # Объединяем компетенции
+    for profile in profiles:
+        for category, scores in profile.competencies.items():
+            merged_competencies[category].extend(scores)
+        if profile.resume:
+            resume_texts.append(profile.resume)
+
+    # Создаем итоговое резюме (если нужно объединить текст)
+    combined_resume = " ".join(resume_texts) if resume_texts else None
+
+    # Возвращаем новый профиль с объединенными данными
+    return UserCompetencyProfile(
+        competencies=dict(merged_competencies),
+        resume=combined_resume
+    )
+
 async def get_github_repo_stat(username: str, owner: str, repo: str, token: str) -> UserRepoStat:
     """
-    Retrieve a repository's statistics from the GitHub API.
+    Получение статистики репозитория из GitHub API.
 
     Args:
-        username (str): The username of the repository owner.
-        owner (str): The owner of the repository.
-        repo (str): The name of the repository.
-        token (str): The GitHub API access token.
+        username (str): Имя пользователя на GitHub.
+        owner (str): Владелец репозитория.
+        repo (str): Название репозитория.
+        token (str): Токен доступа к GitHub API.
 
     Returns:
-        UserRepoStat: The repository's statistics.
+        UserRepoStat: Статистика репозитория.
     """
     repo_stat = UserRepoStat(
         username=username,
@@ -238,12 +259,13 @@ async def get_github_repo_stat(username: str, owner: str, repo: str, token: str)
 
 
 async def fetch_github_data(client: httpx.AsyncClient, url: str, params: dict = None, headers: dict = None) -> httpx.Response:
-    """Fetch data from the GitHub API."""
+    """Формирование запроса к GitHub API."""
     response = await client.get(url, params=params, headers=headers)
     response.raise_for_status()
     return response
 
 async def get_commits(username: str, owner: str, repo: str, token: str) -> List[dict]:
+    """Получение списка коммитов пользователя."""
     all_commits = []
     current_page = 1
     commits_per_page = 100
@@ -265,7 +287,7 @@ async def get_commits(username: str, owner: str, repo: str, token: str) -> List[
             for commit in commits_batch:
                 commit_detail_url = commit["url"]
                 commit_detail_response = await fetch_github_data(client=client, url=commit_detail_url, headers=request_headers)
-                
+
                 if commit_detail_response.status_code == 200:
                     commit_detail = commit_detail_response.json()
                     all_commits.append(commit_detail)
@@ -275,6 +297,8 @@ async def get_commits(username: str, owner: str, repo: str, token: str) -> List[
     return all_commits
 
 async def get_used_github_features(username: str, owner: str, repo: str, token: str) -> List[str]:
+    """Проверка использования различных функций GitHub."""
+
     feature_map = {
         "issues": await check_user_issues(owner, repo, username, token),
         "pull_requests": await check_user_pull_requests(owner, repo, username, token),
@@ -291,7 +315,8 @@ async def get_used_github_features(username: str, owner: str, repo: str, token: 
     return feature_list
 
 async def get_commit_stat(commits):
-    """Calculate various commit statistics from a list of commits."""
+    """Расчет различных метрик коммитов по списку коммитов."""
+
     if not commits:
         return 0, 0, 0, 0, 0
 
@@ -333,7 +358,7 @@ async def get_commit_activity(username, owner, repo, token):
             
             # Проверка успешности запроса
             if response.status_code != 200:
-                print("Error:", response.json().get("message", "Failed to fetch commits"))
+                print("Ошибка:", response.json().get("message", "Failed to fetch commits"))
                 return
             
             # Получаем коммиты с текущей страницы
@@ -350,7 +375,7 @@ async def get_commit_activity(username, owner, repo, token):
             commit_response = await client.get(f"{base_url}/{commit_sha}", headers=headers)
             
             if commit_response.status_code != 200:
-                print("Error:", commit_response.json().get("message", f"Failed to fetch details for commit {commit_sha}"))
+                print("Ошибка:", commit_response.json().get("message", f"Failed to fetch details for commit {commit_sha}"))
                 return None
             
             commit_data = commit_response.json()
@@ -372,4 +397,3 @@ async def fetch_activity(username: str, owner:str, repo: str, token: str) -> Act
     return ActivityList(
         commit_diff=[(item.get('additions') - item.get('deletions')) for item in data]
     )
-

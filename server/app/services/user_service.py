@@ -3,8 +3,11 @@ from fastapi import HTTPException, status
 
 import httpx
 from app.storage.crud.users import read_user, create_user
+from datetime import datetime
+from fastapi import HTTPException, status
+import httpx
 
-async def fetch_user_info(username : str, token: str) -> UserInfo:
+async def fetch_user_info(username: str, token: str) -> UserInfo:
     account_info = await read_user(username)
     if account_info is not None:
         return account_info
@@ -56,6 +59,12 @@ async def fetch_user_info(username : str, token: str) -> UserInfo:
                 team_counter += 1
         
         # Формируем результат
+        # Parse the creation date and calculate account age in months
+        created_at_str = user_data.get("created_at", "")
+        created_at = datetime.strptime(created_at_str, "%Y-%m-%dT%H:%M:%SZ")
+        current_date = datetime.utcnow()
+        account_age_months = (current_date.year - created_at.year) * 12 + current_date.month - created_at.month
+        
         account_info = UserInfo(
             username=username,
             name=user_data.get("name"),
@@ -63,7 +72,7 @@ async def fetch_user_info(username : str, token: str) -> UserInfo:
             team_projects=team_counter,
             solo_projects=(len(repos_data) - team_counter),
             solo_gist=len(gists_data),
-            account_age=(2024 - int(user_data.get("created_at", "")[:4])),
+            account_age=account_age_months,  # Store age in months
             avatar_url=user_data.get("avatar_url"),
             html_url=user_data.get("html_url"),
             followers=user_data.get("followers"),
@@ -74,6 +83,7 @@ async def fetch_user_info(username : str, token: str) -> UserInfo:
         account_info = await create_user(account_info)
         
     return account_info
+
 
 async def get_collaborators_count(client, owner, repo, token):
     url = f"https://api.github.com/repos/{owner}/{repo}/collaborators"

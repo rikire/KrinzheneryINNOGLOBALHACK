@@ -1,16 +1,17 @@
 from pydantic import BaseModel, Field 
 from typing import Optional, List, Dict
 
+
 class Score(BaseModel):
     name: str = Field(..., description="Название компетенции")
     score: int = Field(..., description="Оценка (0-10)")
 
 class UserCompetencyProfile(BaseModel):
-    competencies: Dict[str, List[Score]] = Field(..., description="Категории и соответствующие компетенции с оценками")
+    competencies: Optional[Dict[str, List[Score]]] = Field(None, description="Категории и соответствующие компетенции с оценками")
     resume: Optional[str] = Field(None, description="Описание компетенций пользователя")
-
+    
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "competencies": {
                     "frontend": [{"name": "SVG", "score": 8}],
@@ -32,7 +33,7 @@ class UserRepoStat(BaseModel):
     commits_per_week: float = Field(..., description="Среднее коммитов в неделю")
     commits_per_year: float = Field(..., description="Среднее коммитов в год")
     average_commit_size: float = Field(..., description="Средний размер коммита")
-    competencies: UserCompetencyProfile = Field(..., description="Компетенции разработчика")
+    competencies: Optional[UserCompetencyProfile] = Field(None, description="Компетенции разработчика")
 
     class Config:
         json_schema_extra = {
