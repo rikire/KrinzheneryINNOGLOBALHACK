@@ -13,5 +13,5 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],  # Change to specific methods as needed
     allow_headers=["*"],  # Change to specific headers as needed
-    allow_params=["*"],
+    allow_params=["*"],   
 )

@@ -15,26 +15,12 @@ from app.storage.crud.repo_stats import (
     delete_repo_stat
 )
 from app.storage.crud.users import delete_user
-import yaml
-
+from app.config.config import get_token
 
 router = APIRouter()
 
 # ручка для софт скиллс
 # ручки для удаления из бд
-
-def get_token():
-    """
-    Загружает токен GitHub из файла конфигурации `config.yaml`.
-    
-    Returns
-    -------
-    str
-        GitHub токен для API-запросов.
-    """
-    with open("config.yaml", "r") as file:
-        config = yaml.safe_load(file)
-        return config.get("github_token")
 
 @router.get(
     "/stat/{username}/{owner}/{repo}",
