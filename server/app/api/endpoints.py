@@ -11,9 +11,15 @@ from app.services.search_service import fetch_search
 from app.services.account_service import (
     create_acc, login_acc, add_command, remove_command
 )
+from app.storage.crud.repo_stats import (
+    delete_repo_stat
+)
 import yaml
 
 router = APIRouter()
+
+# ручка для софт скиллс
+# ручки для удаления из бд
 
 def get_token():
     """
@@ -297,3 +303,30 @@ async def post_analysis(username: str, owner: str, repo: str):
         Результат анализа.
     """
     return await fetch_analysis(username, owner, repo, get_token())
+
+@router.delete(
+    "/delete_stat/{username}/{owner}/{repo}",
+    summary="Удаление статистики репозитория из БД",
+    description="Удаляет статистику репозитория из БД."
+)
+async def delete_repo(username: str, owner: str, repo: str):
+    """
+    Удаляет статистику репозитория из БД.
+
+    Parameters
+    ----------
+    username : str
+        Имя пользователя на GitHub.
+    owner : str
+        Владелец репозитория.
+    repo : str
+        Название репозитория.
+
+    Returns
+    -------
+    UserRepoStat
+        Удаленная статистика репозитория.
+    """
+    return await delete_repo_stat(username, f"{owner}/{repo}")
+
+

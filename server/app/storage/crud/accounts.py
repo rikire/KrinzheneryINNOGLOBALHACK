@@ -34,4 +34,3 @@ async def list_accounts() -> List[Account]:
     """Получение списка всех аккаунтов"""
     accounts = await account_collection.find()
     return [Account(**account) for account in accounts]
-

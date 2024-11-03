@@ -2,6 +2,7 @@ from app.storage.crud.repo_stats import read_repo_stat_by_username, read_repo_st
 from app.schemas.schema import UserGlobalStat, ActivityList, UserRepoStat, UserCompetencyProfile
 from app.services.github_utils import check_user_actions, check_user_projects, check_user_commit_comments, check_user_commits, check_user_issues, check_user_issue_comments, check_user_pull_request_comments, check_user_pull_requests, check_user_releases
 from app.services.user_service import fetch_user_info
+from app.external.get_metrics_from_local import get_hardskills_from_llama
 import git
 import asyncio
 import httpx
@@ -72,6 +73,7 @@ async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) 
     mail = user_info.email
     
     author_name = username
+    
     # Пробуем различные критерии поиска автора
     author_commits = list(local_repo.iter_commits(author=author_name))
     if not author_commits:
@@ -95,16 +97,13 @@ async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) 
         average_commit_size=0,
         competencies = None
     )
-
+    print(author_name)
     # Вычисление статистики коммитов
     repo_stat.commits_total, repo_stat.commits_per_day, repo_stat.commits_per_week, repo_stat.commits_per_year, repo_stat.average_commit_size = await get_local_commit_stat(author_commits)
     repo_stat.using_github_features = await get_used_github_features(username, owner, repo, token)
-    repo_stat.competencies = await get_competencies(repo_path, author_name)
+    repo_stat.competencies = get_hardskills_from_llama(repo_path, [username, name, mail])
     
     return repo_stat
-
-async def get_competencies(repo_path, author_name):
-    return None
 
 async def get_local_commit_stat(commits) -> Tuple[int, float, float, float, float]:
     """Расчет статистики коммитов из списка коммитов."""

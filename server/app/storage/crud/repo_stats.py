@@ -2,6 +2,7 @@ from app.schemas.schema import UserRepoStat
 from bson.objectid import ObjectId
 from ..storage import repo_stat_collection
 from typing import List
+from fastapi import HTTPException, status
 
 async def repo_stat_exists(username: str, repo_name: str) -> bool:
     return bool(
@@ -51,9 +52,9 @@ async def update_repo_stat(repo_stat_data: UserRepoStat) -> UserRepoStat:
     return None
 
 # Удалить пользователя
-async def delete_repo_stat(username: str, repo_name: str) -> UserRepoStat:
-    res = await repo_stat_collection.delete_many({"username": username})
+async def delete_repo_stat(username: str, repo_name: str):
+    res = await repo_stat_collection.delete_one({"username": username, "repo_name": repo_name})
     if res.deleted_count:
-        return UserRepoStat(username=username, repo_name=repo_name)
-    return None
+        return status.HTTP_200_OK
+    return status.HTTP_404_NOT_FOUND
 
