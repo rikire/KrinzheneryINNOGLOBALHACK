@@ -10,7 +10,7 @@ async def create_acc(cred : AccountRegister) -> AccountInfo:
         command_list=[],
         favorites=[]
     )
-    acc = create_account(acc)
+    acc = await create_account(acc)
     return AccountInfo(
         login=cred.login,
         password=cred.password,
@@ -19,7 +19,7 @@ async def create_acc(cred : AccountRegister) -> AccountInfo:
     )
 
 async def login_acc(cred: AccountRegister) -> AccountInfo:
-    acc = get_account(cred.login)
+    acc = await get_account(cred.login)
     if acc is None or acc.password != cred.password:
         return None
     else:
@@ -35,7 +35,7 @@ async def add_command(cred: AccountRegister, command: CommandInfo):
         command_name = command.command_name,
         participants = command.participants
     )
-    acc = get_account(cred.login)
+    acc = await get_account(cred.login)
     if acc is None:
         return None
     else:
@@ -51,7 +51,7 @@ async def remove_command(cred: AccountRegister, command: CommandInfo):
         command_name = command.command_name,
         participants = command.participants
     )
-    acc = get_account(cred.login)
+    acc = await get_account(cred.login)
     if acc is None:
         return None
     else:
