@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, CommandInfo, SearchQuery
+from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList
 
-from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat
+from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
 from app.services.user_service import fetch_user_info
 from app.services.search_service import fetch_search
 from app.services.account_service import create_acc, login_acc, add_command, remove_command
@@ -134,3 +134,11 @@ async def post_command_del(cred: AccountRegister, command: CommandInfo):
 async def get_search(search_query: SearchQuery):
     query = search_query.query
     return await fetch_search(query, token=get_token())
+
+@router.get(
+    "/activity/{username}/{owner}/{repo}",
+    response_model=ActivityList,
+    summary="Получение числовых характеристик изменения коммитов.",
+    description="Получение числовых характеристик изменения коммитов.")
+async def get_activity(username: str, owner: str, repo: str):
+    return await fetch_activity(username, owner, repo, get_token())

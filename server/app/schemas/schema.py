@@ -130,3 +130,6 @@ class SearchQuery(BaseModel):
 
 class SearchResult(BaseModel):
     developers: List[UserInfo] = Field(..., description="Массив информации о пользователях")
+
+class ActivityList(BaseModel):
+    commit_diff: List[int] = Field(..., description="Список разностей между добавленнымыми и удаленными строками коммитов")
