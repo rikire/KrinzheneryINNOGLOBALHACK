@@ -38,4 +38,3 @@ async def delete_user(username: str) -> Optional[UserInfo]:
     if user_data:
         return UserInfo(**user_data)
     return None
-
