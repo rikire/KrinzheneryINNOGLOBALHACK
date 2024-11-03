@@ -31,6 +31,23 @@ const LoginForm = () => {
     };
   });
 
+  const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const body = new FormData(e.currentTarget);
+    // transform body to json
+    const json = Object.fromEntries(body);
+
+    fetch('http://127.0.0.1:8000/' + (isRegister ? 'register' : 'login'), {
+      method: 'POST',
+      body: JSON.stringify(json),
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((d) => {
+        localStorage.setItem('accountInfo', JSON.stringify(d));
+        close();
+      });
+  };
+
   return (
     <div
       className="Paranja"
@@ -40,7 +57,7 @@ const LoginForm = () => {
       }}>
       <form
         className="LoginForm Card"
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={formSubmitHandler}
         onClick={(e) => e.stopPropagation()}>
         <button className="LoginForm-CloseButton" type="button" onClick={close}>
           x
@@ -52,7 +69,7 @@ const LoginForm = () => {
         <input
           className="LoginForm-Input"
           type="text"
-          name="nickname"
+          name="login"
           placeholder="Логин"
         />
         <input

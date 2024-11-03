@@ -1,7 +1,5 @@
-// import { Outlet } from 'react-router-dom';
-
 import { Auth } from '../../features/Auth/Auth';
-import { DevInfoShortCard } from '../../features/DevInfo/DevInfoShortCard';
+import { DevFullCard } from '../../features/DevInfo/DevFullCard';
 import { Header } from '../../features/Header/Header';
 import { Outlet } from 'react-router-dom';
 
@@ -10,7 +8,7 @@ export function App() {
     <>
       <Header />
       <main className="App-Main">
-        <DevInfoShortCard />
+        <DevFullCard username="Ten-Do" />
         <Outlet />
       </main>
       <Auth />
