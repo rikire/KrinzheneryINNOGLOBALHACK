@@ -1,6 +1,6 @@
 from app.storage.crud.repo_stats import read_repo_stat_by_username, read_repo_stat, repo_stat_exists, create_repo_stat
 from app.models.models import RepoStat
-from app.schemas.schema import UserGlobalStat
+from app.schemas.schema import UserGlobalStat, ActivityList
 from app.services.github_utils import check_user_actions, check_user_projects, check_user_commit_comments, check_user_commits, check_user_issues, check_user_issue_comments, check_user_pull_request_comments, check_user_pull_requests, check_user_releases
 
 import git
@@ -294,4 +294,62 @@ async def get_commit_stat(commits):
     avg_commit_size = sum(commit_sizes) / len(commit_sizes)
 
     return commit_count, commits_per_day, commits_per_week, commits_per_year, avg_commit_size
+
+async def get_commit_activity(username, owner, repo, token):
+    # Основной URL для запросов к GitHub API
+    base_url = f"https://api.github.com/repos/{owner}/{repo}/commits"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    
+    # Инициализация клиента
+    async with httpx.AsyncClient() as client:
+        # Получение всех коммитов пользователя
+        commits = []
+        page = 1
+        while True:
+            response = await client.get(f"{base_url}?author={username}&page={page}", headers=headers)
+            
+            # Проверка успешности запроса
+            if response.status_code != 200:
+                print("Error:", response.json().get("message", "Failed to fetch commits"))
+                return
+            
+            # Получаем коммиты с текущей страницы
+            data = response.json()
+            if not data:  # Если коммитов больше нет
+                break
+            
+            commits.extend(data)
+            page += 1
+
+        # Функция для получения деталей коммита асинхронно
+        async def fetch_commit_details(commit):
+            commit_sha = commit["sha"]
+            commit_response = await client.get(f"{base_url}/{commit_sha}", headers=headers)
+            
+            if commit_response.status_code != 200:
+                print("Error:", commit_response.json().get("message", f"Failed to fetch details for commit {commit_sha}"))
+                return None
+            
+            commit_data = commit_response.json()
+            return {
+                "commit_sha": commit_sha,
+                "additions": commit_data["stats"]["additions"],
+                "deletions": commit_data["stats"]["deletions"]
+            }
+
+        # Получаем детали каждого коммита параллельно
+        commit_stats_tasks = [fetch_commit_details(commit) for commit in commits]
+        commit_stats = await asyncio.gather(*commit_stats_tasks)
+        
+    # Фильтруем None-значения (в случае ошибок при запросе)
+    return [stat for stat in commit_stats if stat is not None]
+
+async def fetch_activity(username: str, owner:str, repo: str, token: str) -> ActivityList:
+    data = await get_commit_activity(username, owner, repo, token)
+    return ActivityList(
+        commit_diff=[(item.get('additions') - item.get('deletions')) for item in data]
+    )
 

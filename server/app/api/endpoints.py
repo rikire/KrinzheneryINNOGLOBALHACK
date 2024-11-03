@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException
-from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command, SearchQuery
+from fastapi import APIRouter
+from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList
 
-from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat
+from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
 from app.services.user_service import fetch_user_info
 from app.services.search_service import fetch_search
+from app.services.account_service import create_acc, login_acc, add_command, remove_command
 
 import yaml
 
@@ -23,26 +24,15 @@ def get_token():
     summary="Получение статистики репозитория",
     description="Возвращает статистику по конкретному репозиторию пользователя, включая языки, стек технологий и метрики коммитов.",
 )
-async def get_repo_stat(
-    username: str, 
-    owner: str, 
-    repo: str, 
-    target: str = "github"  # Значение по умолчанию
-):
+async def get_repo_stat(username: str, owner: str, repo: str):
     """
-    Обновляет информацию о статистике репозитория в БД.
+    Обновляет информацию о статистике репозитория в бд.
 
     - **username**: Имя пользователя на GitHub
     - **owner**: Владелец репозитория
     - **repo**: Название репозитория
-    - **target**: Источник данных, "local" или "github"
     """
-    if target not in ["local", "github"]:
-        raise HTTPException(status_code=400, detail="Invalid target value")
-    
-    return await fetch_repo_stat(username, owner, repo, token=get_token(), target=target)
-
-
+    return await fetch_repo_stat(username, owner, repo, token=get_token())
 
 @router.get(
     "/actualize_stat/{username}/{owner}/{repo}",
@@ -122,14 +112,18 @@ async def post_login_acc(cred: AccountRegister):
 
 @router.post(
     "/command",
-    summary="CRUD для комманд.",
-    description="Принимает комманду.")
-async def post_command(cred: AccountRegister, command: Command):
-    return await crud_command(cred, command)
+    response_model=CommandInfo,
+    summary="Добавить команду к аккаунтую",
+    description="Добавить команду к аккаунту.")
+async def post_command(cred: AccountRegister, command: CommandInfo):
+    return await add_command(cred, command)
 
-@router.post("/command/delete")
-async def post_command_del(cred: AccountRegister, command: Command):
-    return await post_command_del(cred, command)
+@router.post("/command/delete",
+    response_model=CommandInfo,
+    summary="Убрать команду из аккаунта",
+    description="Убрать команду из аккаунта.")
+async def post_command_del(cred: AccountRegister, command: CommandInfo):
+    return await remove_command(cred, command)
 
 @router.post(
     "/search",
@@ -140,3 +134,11 @@ async def post_command_del(cred: AccountRegister, command: Command):
 async def get_search(search_query: SearchQuery):
     query = search_query.query
     return await fetch_search(query, token=get_token())
+
+@router.get(
+    "/activity/{username}/{owner}/{repo}",
+    response_model=ActivityList,
+    summary="Получение числовых характеристик изменения коммитов.",
+    description="Получение числовых характеристик изменения коммитов.")
+async def get_activity(username: str, owner: str, repo: str):
+    return await fetch_activity(username, owner, repo, get_token())

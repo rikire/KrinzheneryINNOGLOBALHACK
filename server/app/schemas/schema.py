@@ -107,7 +107,7 @@ class UserInfo(BaseModel):
             }
         }
 
-class Command(BaseModel):
+class CommandInfo(BaseModel):
     command_name: str = Field(..., description="Название команды")
     participants: List[str] = Field(..., description="Участники команды")
 
@@ -117,7 +117,7 @@ class AccountRegister(BaseModel):
 
 class AccountInfo(BaseModel):
     login: str = Field(..., description="Логин аккаунта")
-    command_list: List[Command] = Field(..., description="Список команд")
+    command_list: List[CommandInfo] = Field(..., description="Список команд")
     favorites: List[str] = Field(..., description="Любимые разработчики")
 
 class Summary(BaseModel):
@@ -130,3 +130,6 @@ class SearchQuery(BaseModel):
 
 class SearchResult(BaseModel):
     developers: List[UserInfo] = Field(..., description="Массив информации о пользователях")
+
+class ActivityList(BaseModel):
+    commit_diff: List[int] = Field(..., description="Список разностей между добавленнымыми и удаленными строками коммитов")
