@@ -1,0 +1,523 @@
+.App {
+  &-Main {
+    margin-left: 283px;
+    margin-right: 180px;
+    margin-bottom: 30px;
+  }
+}
+
+.Paranja {
+  position: absolute;
+  inset: 0;
+  background-color: #fffdfd80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.TagCarousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  gap: 10px;
+  padding: 10px 0;
+  width: 100%;
+
+  &-ButtonLeft,
+  &-ButtonRight {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    visibility: hidden;
+    background: url('/CaretRightOutlined.svg') no-repeat center;
+  }
+
+  &-ButtonShadow {
+    width: 60px;
+    height: 100%;
+    background: linear-gradient(270deg, #fffdfd 30%, transparent 100%);
+  }
+
+  &_hasLeft &-ButtonLeft,
+  &_hasRight &-ButtonRight {
+    visibility: visible;
+  }
+
+  &-ButtonLeft {
+    right: -2px;
+  }
+
+  &-ButtonRight {
+    transform: rotate(180deg);
+    background-image: url('/CaretRightOutlined.svg');
+    left: -2px;
+  }
+
+  &-Container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+.TreeList {
+  border-left: 1px solid #ff4d4f;
+  padding-left: 26px;
+  font-size: 16px;
+
+  &-Item {
+    position: relative;
+  }
+
+  &-Item:not(:first-child) {
+    margin-top: 11px;
+  }
+
+  &-Item::before {
+    content: ' ';
+    position: absolute;
+    left: -26px;
+    top: 50%;
+    height: 1px;
+    width: 16px;
+    background-color: #ff4d4f;
+  }
+}
+
+.Input {
+  padding: 0 17px;
+  flex: 1;
+  width: 100%;
+  background-color: #f9f9f9;
+
+  &-Container {
+    border-radius: 14px;
+    box-shadow: 0px 0px 8px 0px #00000026;
+    display: flex;
+    font-size: 14px;
+    // width: 157px;
+    overflow: hidden;
+  }
+
+  &-ActionButton {
+    fill: #fffdfd;
+    border-radius: 14px;
+    height: 34px;
+    color: #ffffff;
+    background-color: #ff4d4f;
+    padding: 7px 9px;
+    line-height: 22px;
+    text-align: left;
+  }
+}
+
+.Tag {
+  height: 33px;
+  white-space: nowrap;
+  font-size: 16px;
+  line-height: 19px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1px solid #7d7d7d80;
+  color: #7d7d7d;
+}
+
+.Tag_primary[class] {
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+}
+
+.LoginForm {
+  max-width: 700px;
+  font-size: 20px;
+  position: relative;
+  padding: 20px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &-CloseButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 28px;
+    width: 28px;
+    border-radius: 8px;
+    background-color: #e2e2e2;
+  }
+
+  &-Description {
+    text-align: justify;
+    color: #7d7d7db7;
+  }
+
+  &-Input {
+    border: 1px solid #7d7d7d80;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-top: 16px;
+  }
+
+  &-Button {
+    margin-top: 16px;
+    background-color: #ff4d4f;
+    color: #fffdfd;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  &-Button_secondary {
+    margin-top: 16px;
+    color: #ff4d4f;
+    border: 1px solid #ff4d4f;
+    padding: 16px;
+    border-radius: 14px;
+  }
+}
+
+.Header {
+  display: flex;
+  margin: 20px 20px 16px;
+  gap: 12px;
+
+  &-Search {
+    width: 157px;
+  }
+}
+
+.History {
+  padding-top: 14px;
+  &-Item {
+    padding: 7px 14px;
+  }
+
+  &-ItemIcon {
+    margin-right: 4px;
+  }
+}
+
+.Card {
+  border-radius: 20px;
+  border: 1px solid #ff4d4f80;
+  background-color: #fffdfd;
+  box-shadow: 0px 0px 8px 0px #00000026;
+}
+
+.DeveloperCard {
+  padding: 23px;
+}
+
+.DeveloperCard:not(:first-child) {
+  margin-top: 14px;
+}
+
+.DeveloperCV {
+  padding: 22px;
+
+  &-Divider {
+    width: 100%;
+    height: 1px;
+    border-radius: 1px;
+    background-color: #ff4d4f;
+    margin-top: 20px;
+    margin-bottom: 18px;
+  }
+
+  &-Scores {
+    padding-top: 36px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &-Lists {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &-ListHeader {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 21px;
+  }
+
+  &-Stats {
+    line-height: 19px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &-StatTitle {
+    line-height: 22px;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  &-CommonStat:not(:last-child) {
+    margin-bottom: 14px;
+  }
+
+  &-AverageStatsWrapper {
+    display: flex;
+    gap: 40px;
+  }
+
+  &-AverageStat {
+    flex: 1;
+  }
+
+  &-AverageStatValue {
+    text-align: center;
+    line-height: 35px;
+    font-size: 30px;
+    color: #ff4d4f;
+    font-weight: 600;
+  }
+
+  &-AverageStatLabel {
+    margin-top: 4px;
+    text-wrap: nowrap;
+  }
+
+  &-Charts {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  &-ChartContainer {
+    flex: 1;
+  }
+  &-ChartHeader {
+    font-size: 20px;
+  }
+
+  &-Chart {
+    height: 400px;
+  }
+}
+
+.DevInfo {
+  display: flex;
+  gap: 24px;
+  &-Avatar {
+    border-radius: 18px;
+    border: 1px solid #7d7d7d;
+    height: 168px;
+    width: 168px;
+  }
+
+  &-Title {
+    .DevInfo_stats & {
+      flex: 1;
+    }
+    &-Username {
+      display: flex;
+      font-size: 24px;
+      line-height: 27px;
+
+      font-weight: 500 !important;
+
+      fill: #7d7d7d80;
+
+      & p {
+        border-bottom: 2px solid #191919;
+        margin-right: 10px;
+      }
+    }
+
+    &-Name {
+      margin-top: 12px;
+      font-size: 28px;
+      line-height: 30px;
+      font-weight: 500;
+    }
+
+    &-Email {
+      font-size: 16px;
+      line-height: 19px;
+      margin-top: 12px;
+    }
+
+    &-Age {
+      line-height: 21px;
+      margin-top: 13px;
+      font-size: 18px;
+    }
+
+    &-Age,
+    &-Email,
+    &-Follow {
+      color: #7d7d7d;
+    }
+
+    &-Follow {
+      margin-top: 9px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      line-height: 17px;
+    }
+
+    &-Stats {
+      margin-top: 12px;
+    }
+
+    .DevInfo_stats &-Stats {
+      display: none;
+    }
+
+    .DevInfo_competencies &-Email {
+      margin-top: 16px;
+    }
+
+    .DevInfo_competencies &-Info {
+      display: none;
+    }
+  }
+
+  &-StatInfo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    &-Competencies,
+    &-Stack {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    &-Stack {
+      margin-top: 16px;
+    }
+
+    &-Counts {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-top: 10px;
+
+      .DevInfo_competencies & {
+        display: none;
+      }
+    }
+
+    &-CountValue {
+      line-height: 19px;
+      text-align: right;
+    }
+    .DevInfo_stats &-Stack {
+      display: none;
+    }
+  }
+}
+
+.Competencies[class] {
+  border-radius: 14px;
+  height: 34px;
+  font-size: 14px;
+  line-height: 17px;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  // padding: 7px 22px 8px;
+}
+
+.Actions {
+  position: relative;
+  display: flex;
+  gap: 20px;
+
+  &-Action {
+    position: relative;
+    width: 36px;
+    transition: 0.3s;
+  }
+
+  &-Action:hover {
+    width: 162px;
+  }
+
+  &-Main {
+    color: #7d7d7d;
+    box-shadow: 0px 0px 8px 0px #00000026;
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid #ff4d4f80;
+    position: absolute;
+    top: calc(100% + 20px);
+    right: 0;
+    left: 0;
+  }
+
+  &-MainItems {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 400px;
+  }
+
+  &-MainHeader {
+    padding: 7px 10px;
+    border-bottom: 1px solid #ff4d4f80;
+    border-radius: 14px;
+  }
+
+  &-MainItem {
+    padding: 5px 10px;
+    display: flex;
+    fill: #7d7d7d;
+  }
+
+  &-MainItem:hover {
+    color: #ff4d4f;
+    fill: #ff4d4f;
+  }
+
+  &-MainItem svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &-MainItemText {
+    margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100% - 40px);
+  }
+
+  &-MainButton {
+    padding: 7px 10px;
+    border-top: 1px solid #ff4d4f80;
+  }
+
+  &-MainButton:hover {
+    color: #ff4d4f;
+  }
+
+  &-Button {
+    box-shadow: 0px 0px 8px 0px #00000026;
+    height: 34px;
+    width: 36px;
+    color: #ffffff;
+    background-color: #ff4d4f;
+    border-radius: 14px;
+    fill: #fffdfd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

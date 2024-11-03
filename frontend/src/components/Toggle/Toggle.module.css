@@ -1,0 +1,45 @@
+.NavigationSwitchContainer {
+  width: 100%;
+}
+
+.NavigationSwitch {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  border-radius: 14px;
+  padding: 0 12px;
+}
+
+.NavigationSwitch_active .NavigationSwitchHighlight {
+  opacity: 1;
+}
+
+.NavigationSwitchHighlight {
+  width: 0;
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+  background-color: #ff4d4f;
+  border-radius: 14px;
+  opacity: 0;
+}
+
+.NavigationSwitchHighlight_animated {
+  transition: 0.3s;
+}
+
+.NavigationSwitchButton {
+  position: relative;
+  padding: 8px 12px;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+
+.NavigationSwitchButton:not(.NavigationSwitchButton_active):hover,
+.NavigationSwitchButton:not(.NavigationSwitchButton_active):focus {
+  color: #ff4d4f;
+}
+.NavigationSwitchButton_active[class] {
+  color: #fff;
+}
