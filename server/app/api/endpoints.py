@@ -6,7 +6,7 @@ from app.schemas.schema import (
 from app.services.repo_service import (
     fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
 )
-from app.services.user_service import fetch_user_info
+from app.services.user_service import fetch_user_info, fetch_user_soft_skills
 from app.services.search_service import fetch_search
 from app.services.account_service import (
     create_acc, login_acc, add_command, remove_command, add_favorite, remove_favorite, update_favorites
@@ -21,6 +21,27 @@ router = APIRouter()
 
 # ручка для софт скиллс
 # ручки для удаления из бд
+
+@router.get(
+    "/soft_skills/{username}",
+    summary="Получение софтскиллов разработчика",
+    description="Возвращает список софтскиллов разработчика."
+)
+async def get_soft_skills(username: str):
+    """
+    Возвращает список софтскиллов разработчика.
+
+    Parameters
+    ----------
+    username : str
+        Имя пользователя на GitHub.
+
+    Returns
+    -------
+    Summary
+        Список софтскиллов разработчика.
+    """
+    return await fetch_user_soft_skills(username, token=get_token())
 
 @router.get(
     "/stat/{username}/{owner}/{repo}",
