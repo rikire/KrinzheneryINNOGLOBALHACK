@@ -8,3 +8,4 @@ datetime
 motor
 uvicorn
 pymongo
+GitPython
