@@ -2,13 +2,13 @@ from app.storage.crud.repo_stats import read_repo_stat_by_username, read_repo_st
 from app.models.models import RepoStat
 from app.schemas.schema import UserGlobalStat, ActivityList
 from app.services.github_utils import check_user_actions, check_user_projects, check_user_commit_comments, check_user_commits, check_user_issues, check_user_issue_comments, check_user_pull_request_comments, check_user_pull_requests, check_user_releases
-
+from app.services.user_service import fetch_user_info
 import git
 import asyncio
 import httpx
 from typing import List, Dict, Tuple
 import datetime
-
+import os
 async def fetch_repo_stat(username: str, owner: str, repo: str, token: str, target: str) -> RepoStat:
     """
     Retrieve a repository's statistics from the cache or GitHub API.
@@ -64,6 +64,9 @@ async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) 
 
     local_repo = None
     repo_path = f"./dataset/{repo}"
+   
+    os.makedirs("dataset", exist_ok=True)
+   
     try:
         local_repo = git.Repo(repo_path)
     except git.exc.NoSuchPathError:
@@ -74,8 +77,18 @@ async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) 
     
     # Fetch the author’s commits
     # name, mail, username
-    author_commits = local_repo.iter_commits(author=username)
-
+    user_info = await fetch_user_info(username=username, token=token)
+    name = user_info.name
+    mail = user_info.email
+    
+    # Try different author search criteria
+    author_commits = list(local_repo.iter_commits(author=username))
+    if not author_commits:
+        author_commits = list(local_repo.iter_commits(author=name))  # Substitute with known email if available
+    if not author_commits:
+        author_commits = list(local_repo.iter_commits(author=mail))  # Try first name or other known name info
+    
+    
     # Calculate commit statistics
     repo_stat.commits_total, repo_stat.commits_per_day, repo_stat.commits_per_week, repo_stat.commits_per_year, repo_stat.average_commit_size = await get_local_commit_stat(author_commits)
     repo_stat.using_github_features = await get_used_github_features(username, owner, repo, token)

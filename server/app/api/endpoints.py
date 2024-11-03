@@ -15,8 +15,6 @@ def get_token():
     with open("config.yaml", "r") as file:
         config = yaml.safe_load(file)
         return config.get("github_token")
-        
-
 
 @router.get(
     "/stat/{username}/{owner}/{repo}",
@@ -24,7 +22,7 @@ def get_token():
     summary="Получение статистики репозитория",
     description="Возвращает статистику по конкретному репозиторию пользователя, включая языки, стек технологий и метрики коммитов.",
 )
-async def get_repo_stat(username: str, owner: str, repo: str):
+async def get_repo_stat(username: str, owner: str, repo: str, target: str = 'github'):
     """
     Обновляет информацию о статистике репозитория в бд.
 
@@ -32,7 +30,7 @@ async def get_repo_stat(username: str, owner: str, repo: str):
     - **owner**: Владелец репозитория
     - **repo**: Название репозитория
     """
-    return await fetch_repo_stat(username, owner, repo, token=get_token())
+    return await fetch_repo_stat(username, owner, repo, token=get_token(), target=target)
 
 @router.get(
     "/actualize_stat/{username}/{owner}/{repo}",
@@ -77,20 +75,6 @@ async def get_user_info(username: str):
     - **username**: Имя пользователя на GitHub
     """
     return await fetch_user_info(username, token=get_token())
-
-@router.get(
-    "/summary/{username}",
-    response_model=Summary,
-    summary="Возвращает саммари о пользователе",
-    description="Возвращает саммари о пользователе, сгенерированное ламой."
-)
-async def get_summary(username: str):
-    """
-    Возвращает саммари о пользователе, сгенерированное ламой.
-
-    - **username**: Имя пользователя на GitHub
-    """
-    return await fetch_summary(username, token=get_token())
 
 @router.post(
     "/register",
@@ -142,3 +126,11 @@ async def get_search(search_query: SearchQuery):
     description="Получение числовых характеристик изменения коммитов.")
 async def get_activity(username: str, owner: str, repo: str):
     return await fetch_activity(username, owner, repo, get_token())
+
+@router.post(
+    "/post_analysis/{username}/{owner}/{repo}",
+    summary="Получение анализа от llama",
+    description="Получение анализа от llama."
+)
+async def post_analysis(username: str, owner: str, repo: str):
+    return await fetch_analysis(username, owner, repo, get_token())
