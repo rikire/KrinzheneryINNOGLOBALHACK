@@ -1,0 +1,39 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #191919;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #fffbfb;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Targets the scrollbar track (the background part) */
+*::-webkit-scrollbar {
+  width: 4px; /* Width for vertical scrollbar */
+  height: 1px;
+}
+
+/* Background of the scrollbar */
+*::-webkit-scrollbar-track {
+  background: transparent; /* Light transparent background */
+}
+
+/* Thumb of the scrollbar (the draggable part) */
+*::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: var(--border-radius-full);
+}
+
+/* Optional: scrollbar corner styling (appears where horizontal and vertical meet) */
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
