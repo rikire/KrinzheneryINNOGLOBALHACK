@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.schemas.schema import UserRepoStat, UserGlobalStat, UserInfo, Summary, SearchResult, AccountRegister, AccountInfo, Command, SearchQuery
 
 from app.services.repo_service import fetch_repo_stat, fetch_actualize_stat, fetch_global_stat
@@ -23,15 +23,26 @@ def get_token():
     summary="Получение статистики репозитория",
     description="Возвращает статистику по конкретному репозиторию пользователя, включая языки, стек технологий и метрики коммитов.",
 )
-async def get_repo_stat(username: str, owner: str, repo: str):
+async def get_repo_stat(
+    username: str, 
+    owner: str, 
+    repo: str, 
+    target: str = "github"  # Значение по умолчанию
+):
     """
-    Обновляет информацию о статистике репозитория в бд.
+    Обновляет информацию о статистике репозитория в БД.
 
     - **username**: Имя пользователя на GitHub
     - **owner**: Владелец репозитория
     - **repo**: Название репозитория
+    - **target**: Источник данных, "local" или "github"
     """
-    return await fetch_repo_stat(username, owner, repo, token=get_token())
+    if target not in ["local", "github"]:
+        raise HTTPException(status_code=400, detail="Invalid target value")
+    
+    return await fetch_repo_stat(username, owner, repo, token=get_token(), target=target)
+
+
 
 @router.get(
     "/actualize_stat/{username}/{owner}/{repo}",

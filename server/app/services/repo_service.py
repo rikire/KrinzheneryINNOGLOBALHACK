@@ -3,12 +3,13 @@ from app.models.models import RepoStat
 from app.schemas.schema import UserGlobalStat
 from app.services.github_utils import check_user_actions, check_user_projects, check_user_commit_comments, check_user_commits, check_user_issues, check_user_issue_comments, check_user_pull_request_comments, check_user_pull_requests, check_user_releases
 
+import git
 import asyncio
 import httpx
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import datetime
 
-async def fetch_repo_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
+async def fetch_repo_stat(username: str, owner: str, repo: str, token: str, target: str) -> RepoStat:
     """
     Retrieve a repository's statistics from the cache or GitHub API.
 
@@ -24,10 +25,95 @@ async def fetch_repo_stat(username: str, owner: str, repo: str, token: str) -> R
     repo_name = f"{owner}/{repo}"
     if await repo_stat_exists(username, repo_name):
         return await read_repo_stat(username, repo_name)
-    repo_stat = await get_github_repo_stat(username, owner, repo, token)
-    await create_repo_stat(repo_stat)
+    if target == 'local':
+        repo_stat = await get_local_repo_stat(username, owner, repo, token)
+        await create_repo_stat(repo_stat)
+    if target == 'github':
+        repo_stat = await get_github_repo_stat(username, owner, repo, token)
+        await create_repo_stat(repo_stat)
     return repo_stat
+
+async def get_local_repo_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
+    """
+    Retrieve a repository's statistics from the local Git repository.
+
+    Args:
+        username (str): The username of the repository owner.
+        owner (str): The owner of the repository.
+        repo (str): The name of the repository.
+        token (str): The GitHub API access token (not used here).
+
+    Returns:
+        RepoStat: The repository's statistics.
+    """
+    repo_stat = RepoStat(
+        username=username,
+        repo_name=f"{owner}/{repo}",
+        repo_html_url=f"https://github.com/{owner}/{repo}",
+        languages=[],
+        competencies=[],
+        using_github_features=[],
+        stack=[],
+        score=[],
+        commits_total=0,
+        commits_per_day=0,
+        commits_per_week=0,
+        commits_per_year=0,
+        average_commit_size=0
+    )
+
+    local_repo = None
+    repo_path = f"./dataset/{repo}"
+    try:
+        local_repo = git.Repo(repo_path)
+    except git.exc.NoSuchPathError:
+        gitclone = git.Repo.clone_from(f"https://github.com/{owner}/{repo}.git", repo_path)
+        if gitclone is None:
+            raise Exception(f"Failed to clone repository {owner}/{repo}.")
+        local_repo = git.Repo(repo_path)
     
+    # Fetch the author’s commits
+    # name, mail, username
+    author_commits = local_repo.iter_commits(author=username)
+
+    # Calculate commit statistics
+    repo_stat.commits_total, repo_stat.commits_per_day, repo_stat.commits_per_week, repo_stat.commits_per_year, repo_stat.average_commit_size = await get_local_commit_stat(author_commits)
+    repo_stat.using_github_features = await get_used_github_features(username, owner, repo, token)
+    
+    return repo_stat
+
+async def get_local_commit_stat(commits) -> Tuple[int, float, float, float, float]:
+    """Calculate various commit statistics from a list of commits."""
+    commit_count = 0
+    total_changes = 0
+    first_commit, last_commit = None, None
+
+    # Process commits and gather stats
+    for commit in commits:
+        commit_count += 1
+        commit_date = commit.committed_datetime
+        total_changes += commit.stats.total['lines']
+
+        if first_commit is None or commit_date < first_commit:
+            first_commit = commit_date
+        if last_commit is None or commit_date > last_commit:
+            last_commit = commit_date
+
+    if commit_count == 0:
+        return 0, 0, 0, 0, 0
+
+    # Time range calculations
+    days_diff = max((last_commit - first_commit).days, 1)  # Avoid division by zero
+    commits_per_day = commit_count / days_diff
+    commits_per_week = commits_per_day * 7
+    commits_per_year = commits_per_day * 365
+
+    # Average commit size
+    avg_commit_size = total_changes / commit_count
+
+    return commit_count, commits_per_day, commits_per_week, commits_per_year, avg_commit_size
+
+
 async def fetch_actualize_stat(username: str, owner: str, repo: str, token: str) -> RepoStat:
     """
     Retrieve a repository's statistics from the GitHub API.
