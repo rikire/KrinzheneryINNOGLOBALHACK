@@ -1,9 +1,8 @@
-import React from 'react';
-import { DeveloperCommonInfo } from '../DeveloperCommonInfo/DeveloperCommonInfo';
 import { Tag } from '../../components/Tag';
 import { TreeList } from '../../components/TreeList';
 import { TagCarousel } from '../../components/TagCarousel';
 import { Chart } from '../../components/Charts';
+import { DevInfo } from '../DeveloperCommonInfo/DeveloperCommonInfo';
 
 const option = {
   tooltip: {
@@ -84,8 +83,8 @@ const DESC =
 export const DeveloperCV = () => {
   return (
     <div className="Card DeveloperCV">
-      <DeveloperCommonInfo
-        viewType={''}
+      <DevInfo
+        viewType="stats"
         username={'Ten-Do'}
         name={'Руденко Юрий'}
         email={'rydenko.urii@mail.ru'}

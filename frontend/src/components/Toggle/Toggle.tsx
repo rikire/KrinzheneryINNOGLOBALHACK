@@ -25,8 +25,8 @@ export const Toggle = ({ toggleHandler, current, options }: ToggleProps) => {
     const x = (activeBtn as HTMLElement)?.offsetLeft || 0;
 
     if (highlightRef.current) {
-      highlightRef.current.style.width = `${w}px`;
-      highlightRef.current.style.transform = `translateX(${x}px)`;
+      highlightRef.current.style.width = `${w + 25}px`;
+      highlightRef.current.style.transform = `translateX(${x - 12}px)`;
     }
   }, [current]);
 

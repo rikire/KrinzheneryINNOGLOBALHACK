@@ -1,0 +1,22 @@
+.DevInfoShortCard {
+  display: flex;
+  gap: 25px;
+  padding: 23px;
+
+  &-Stats {
+    flex: 1;
+  }
+}
+
+.AddToFavoritesButton path,
+.AddToTeamButton path {
+  fill: #7d7d7d80;
+}
+
+.AddToTeamButton_active path {
+  fill: #34b800;
+}
+
+.AddToFavoritesButton_active path {
+  fill: #ff4d4f;
+}

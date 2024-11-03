@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Toggle, ToggleProps } from '../../../components/Toggle';
+import { useSearchParams } from 'react-router-dom';
 
-const competitions: ToggleProps['options'] = [
+const competencies: ToggleProps['options'] = [
   {
     name: 'frontend',
     label: 'frontend',
@@ -36,17 +37,22 @@ const competitions: ToggleProps['options'] = [
   },
 ];
 
-export const Competitions = () => {
-  const [current, setCurrent] = useState('');
-  const toggleHandler = useCallback((name: string) => {
-    setCurrent(name);
-  }, []);
+export const Competencies = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const toggleHandler = useCallback(
+    (name: string) => {
+      setSearchParams({ competencies: name });
+    },
+    [setSearchParams],
+  );
+
   return (
-    <div className="Competitions Card">
+    <div className="Competencies Card">
       <Toggle
         toggleHandler={toggleHandler}
-        current={current}
-        options={competitions}
+        current={searchParams.get('competencies') || ''}
+        options={competencies}
       />
     </div>
   );

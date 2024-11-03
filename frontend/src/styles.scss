@@ -6,6 +6,15 @@
   }
 }
 
+.Paranja {
+  position: absolute;
+  inset: 0;
+  background-color: #fffdfd80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .TagCarousel {
   display: flex;
   overflow-x: auto;
@@ -106,6 +115,7 @@
 }
 
 .Tag {
+  height: 33px;
   white-space: nowrap;
   font-size: 16px;
   line-height: 19px;
@@ -118,6 +128,58 @@
 .Tag_primary[class] {
   border: 1px solid #ff4d4f;
   color: #ff4d4f;
+}
+
+.LoginForm {
+  max-width: 700px;
+  font-size: 20px;
+  position: relative;
+  padding: 20px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &-CloseButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 28px;
+    width: 28px;
+    border-radius: 8px;
+    background-color: #e2e2e2;
+  }
+
+  &-Description {
+    text-align: justify;
+    color: #7d7d7db7;
+  }
+
+  &-Input {
+    border: 1px solid #7d7d7d80;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-top: 16px;
+  }
+
+  &-Button {
+    margin-top: 16px;
+    background-color: #ff4d4f;
+    color: #fffdfd;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  &-Button_secondary {
+    margin-top: 16px;
+    color: #ff4d4f;
+    border: 1px solid #ff4d4f;
+    padding: 16px;
+    border-radius: 14px;
+  }
 }
 
 .Header {
@@ -146,6 +208,14 @@
   border: 1px solid #ff4d4f80;
   background-color: #fffdfd;
   box-shadow: 0px 0px 8px 0px #00000026;
+}
+
+.DeveloperCard {
+  padding: 23px;
+}
+
+.DeveloperCard:not(:first-child) {
+  margin-top: 14px;
 }
 
 .DeveloperCV {
@@ -237,7 +307,7 @@
   }
 }
 
-.DeveloperCommonInfo {
+.DevInfo {
   display: flex;
   gap: 24px;
   &-Avatar {
@@ -247,11 +317,15 @@
     width: 168px;
   }
 
-  &-ContactInfo {
-    flex: 1;
+  &-Title {
+    .DevInfo_stats & {
+      flex: 1;
+    }
     &-Username {
       display: flex;
       font-size: 24px;
+      line-height: 27px;
+
       font-weight: 500 !important;
 
       fill: #7d7d7d80;
@@ -263,17 +337,21 @@
     }
 
     &-Name {
+      margin-top: 12px;
       font-size: 28px;
+      line-height: 30px;
       font-weight: 500;
     }
 
     &-Email {
       font-size: 16px;
-      font-weight: 400;
-      font-size: 16px;
+      line-height: 19px;
+      margin-top: 12px;
     }
 
     &-Age {
+      line-height: 21px;
+      margin-top: 13px;
       font-size: 18px;
     }
 
@@ -284,25 +362,70 @@
     }
 
     &-Follow {
+      margin-top: 9px;
       display: flex;
       justify-content: space-between;
       font-size: 14px;
+      line-height: 17px;
+    }
+
+    &-Stats {
+      margin-top: 12px;
+    }
+
+    .DevInfo_stats &-Stats {
+      display: none;
+    }
+
+    .DevInfo_competencies &-Email {
+      margin-top: 16px;
+    }
+
+    .DevInfo_competencies &-Info {
+      display: none;
     }
   }
 
   &-StatInfo {
+    display: flex;
+    flex-direction: column;
     flex: 1;
 
-    &-Competencies {
+    &-Competencies,
+    &-Stack {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
+
+    &-Stack {
+      margin-top: 16px;
+    }
+
+    &-Counts {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-top: 10px;
+
+      .DevInfo_competencies & {
+        display: none;
+      }
+    }
+
+    &-CountValue {
+      line-height: 19px;
+      text-align: right;
+    }
+    .DevInfo_stats &-Stack {
+      display: none;
+    }
   }
 }
 
-.Competitions[class] {
+.Competencies[class] {
   border-radius: 14px;
   height: 34px;
   font-size: 14px;

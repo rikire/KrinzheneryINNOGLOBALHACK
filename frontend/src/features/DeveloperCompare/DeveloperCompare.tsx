@@ -1,51 +1,8 @@
-import FireSVG from '../../shared/icons/FireOutlined';
-import AddToComandsSVG from '../../shared/icons/AddToComand';
-import { Tag } from '../../components/Tag';
+import { DevInfo } from '../DevInfo/DevInfo';
 
-export interface IDevInfoProps {
-  viewType: 'competencies' | 'stats' | 'compare';
-  username: string;
-  name: string;
-  email: string;
-  accountAge: number;
-  avatarURL: string;
-
-  followers: number;
-  followCount: number;
-}
-
-const getRandomNumber = () => Math.floor(Math.random() * 100);
-
-const stack: string[] = [
-  'React',
-  'Vue',
-  'Node.js',
-  'Django',
-  'Flask',
-  'Spring',
-];
-
-const competencies: string[] = [
-  'frontend',
-  'backend',
-  'devops',
-  'data_science',
-  'qa',
-];
-
-export const DevInfo = ({
-  viewType,
-  username,
-  name,
-  email,
-  accountAge,
-  avatarURL,
-
-  followers,
-  followCount,
-}: IDevInfoProps) => {
+export const DeveloperCompare = () => {
   return (
-    <div className={'DevInfo' + ' DevInfo_' + viewType}>
+    <div>
       <img className="DevInfo-Avatar" src={avatarURL} alt="" />
       <div className="DevInfo-Title">
         <div className="DevInfo-Title-Username">
@@ -65,6 +22,14 @@ export const DevInfo = ({
             <p>Подписки: {followCount}</p>
             <p>Подписчики: {followers}</p>
           </div>
+        </div>
+        <div className="DevInfo-Title-Stats">
+          <p className="DevInfo-Title-Stat">
+            Кол-во командных проектов: {getRandomNumber()}
+          </p>
+          <p className="DevInfo-Title-Stat">
+            Кол-во собственных проектов: {getRandomNumber()}
+          </p>
         </div>
       </div>
       <div className="DevInfo-StatInfo">
@@ -96,12 +61,4 @@ export const DevInfo = ({
       </div>
     </div>
   );
-};
-
-const getAge = (mounts: number) => {
-  const years = Math.floor(mounts / 12);
-  const months = mounts % 12;
-  return `${years} ${years === 1 ? 'год' : 'года'} ${months} ${
-    months === 1 ? 'месяц' : 'месяца на GitHub'
-  }`;
 };

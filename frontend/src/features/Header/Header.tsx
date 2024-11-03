@@ -1,5 +1,5 @@
 import { Actions } from './Actions/Actions';
-import { Competitions } from './Competitions/Competitions';
+import { Competencies } from './Competitions/Competitions';
 import { Search } from './Search/Search';
 
 export const Header = () => {
@@ -8,7 +8,7 @@ export const Header = () => {
       <div className="Heaader-Search">
         <Search />
       </div>
-      <Competitions />
+      <Competencies />
       <Actions />
     </div>
   );

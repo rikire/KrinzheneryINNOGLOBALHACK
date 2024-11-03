@@ -2,10 +2,12 @@ import { configureStore } from '@reduxjs/toolkit';
 import { reposApi } from './repos/api';
 import { backendApi } from './backend/api';
 import reposReduser from './repos/slice';
+import { authSlice } from './auth/slice';
 
 export const store = configureStore({
   reducer: {
     repos: reposReduser,
+    auth: authSlice.reducer,
     [backendApi.reducerPath]: backendApi.reducer,
     [reposApi.reducerPath]: reposApi.reducer,
   },
