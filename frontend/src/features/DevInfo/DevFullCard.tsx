@@ -1,5 +1,4 @@
 import { TagCarousel } from '../../components/TagCarousel';
-import { TreeList } from '../../components/TreeList';
 import { useGetUserInfoQuery } from '../../store/backend/api';
 import { Avatar } from './DevInfo.components/Avatar';
 import { DevCharts } from './DevInfo.components/DevCharts';
@@ -17,7 +16,6 @@ export interface DevFullCardProps {
   username: string;
 }
 
-// TODO - убрать дефолтные пропсы
 export const DevFullCard = ({ username }: DevFullCardProps) => {
   const { data, isLoading, isError } = useGetUserInfoQuery({
     username,
@@ -107,7 +105,7 @@ export const DevFullCard = ({ username }: DevFullCardProps) => {
       <div className="DeveloperCV-ReposCarousel">
         <TagCarousel tags={data.repos} />
       </div>
-      <DevCharts />
+      <DevCharts username={username} repo={'Ten-Do/EBUS'} />
     </div>
   );
 };

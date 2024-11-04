@@ -17,12 +17,31 @@ export const AddToFavoritesButton: React.FC<AddToFavoritesButtonProps> = ({
   const handleClick = () => {
     const accountInfo = getAccountInfo(dispatch);
     if (!accountInfo) {
-      dispatch(setShow(true));
+      dispatch(setShow(true)); // открыть форму авторизации
     } else {
-      if (checkIsDeveloperInFavorites(username, accountInfo.favorites)) {
-        setIsActive(true);
-        // TODO: добавлять по клику в избранное
-      }
+      const isFavorite = checkIsDeveloperInFavorites(
+        username,
+        accountInfo.favorites,
+      );
+      setIsActive(!isFavorite);
+      // TODO проверить произошла ли ошибка и добавился ли новый юзер
+      fetch('http://0.0.0.0:8000/favorite/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          login: accountInfo.login,
+          favorites: isFavorite
+            ? accountInfo.favorites.filter((item) => item !== username)
+            : [...accountInfo.favorites, username],
+        }),
+      })
+        .then((response) =>
+          response.ok ? response.json() : Promise.reject(response),
+        )
+        .then((data) => {
+          localStorage.setItem('accountInfo', JSON.stringify(data));
+        })
+        .catch((error) => console.error('Error updating favorites:', error));
     }
   };
 

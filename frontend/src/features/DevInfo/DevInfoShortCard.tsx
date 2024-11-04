@@ -37,8 +37,10 @@ export const DevInfoShortCard = ({ username }: DevInfoShortCardProps) => {
         />
       </div>
       <div className="DevInfoShortCard-Stats">
-        <DevCompetencies competencies={defaultProps.competencies} />
-        <DevStack stack={defaultProps.stack} />
+        {/* TODO: прокинуть компетенции */}
+        <DevCompetencies competencies={[]} />
+        {/* TODO: прокинуть стек */}
+        <DevStack stack={[]} />
       </div>
     </div>
   );

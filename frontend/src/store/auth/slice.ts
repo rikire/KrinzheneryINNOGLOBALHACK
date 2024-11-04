@@ -4,12 +4,14 @@ import type { RootState } from '../store';
 
 // Define a type for the slice state
 interface IAuthState {
-  show: boolean;
+  showLoginForm: boolean;
+  showNewTeamForm: boolean;
 }
 
 // Define the initial state using that type
 const initialState: IAuthState = {
-  show: false,
+  showLoginForm: false,
+  showNewTeamForm: false,
 };
 
 export const authSlice = createSlice({
@@ -17,13 +19,18 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setShow: (state, action: PayloadAction<boolean>) => {
-      state.show = action.payload;
+      state.showLoginForm = action.payload;
+    },
+    setShowCreateTeamForm: (state, action: PayloadAction<boolean>) => {
+      state.showNewTeamForm = action.payload;
     },
   },
 });
 
-export const { setShow } = authSlice.actions;
+export const { setShow, setShowCreateTeamForm } = authSlice.actions;
 
-export const selectIsShow = (state: RootState) => state.auth.show;
+export const selectIsShow = (state: RootState) => state.auth.showLoginForm;
+export const selectIsShowCreateTeamForm = (state: RootState) =>
+  state.auth.showNewTeamForm;
 
 export default authSlice.reducer;
