@@ -32,6 +32,19 @@ async def get_users():
         users=data
     )
 
+@router.get(
+    "/find/{pattern}",
+    response_model=SavedUsers,
+)
+async def get_sub_users(pattern: str):
+    await extract_and_save_users()
+    data = await get_all_users()
+    data = [username for username in data if username.startswith(pattern)]
+    return SavedUsers(
+        users=data
+    )
+
+
 
 @router.post(
     "/competencies/{username}",
