@@ -44,7 +44,9 @@ async def extract_and_save_users(zip_path="hardskills_with_repo.zip"):
                     # Сохранение объекта в коллекцию MongoDB
                     user_comp_collection.insert_one(data)
 
-
+async def get_all_users():
+    all_users = await user_comp_collection.distinct('username')
+    return all_users
 
 async def get_objects_by_username(username):
     """

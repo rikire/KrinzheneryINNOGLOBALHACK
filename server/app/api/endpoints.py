@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, HTTPException
 from app.schemas.schema import (
     UserRepoStat, UserGlobalStat, UserInfo, SearchResult,
-    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList, CommandQuerry, FavoriteQuerry, FavoriteListQuerry, AccountResume
+    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList, CommandQuerry, FavoriteQuerry, FavoriteListQuerry, AccountResume, SavedUsers
 )
 from app.services.repo_service import (
     fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
@@ -17,19 +17,27 @@ from app.storage.crud.repo_stats import (
 from app.storage.crud.users import delete_user
 from app.config.config import get_token
 
-from app.storage.storage import is_collection_empty, extract_and_save_users, get_objects_by_username
+from app.storage.storage import is_collection_empty, extract_and_save_users, get_objects_by_username, get_all_users
 
 router = APIRouter()
 
-
-
+@router.get(
+    "/saved",
+    response_model=SavedUsers,
+)
+async def get_users():
+    await extract_and_save_users()
+    data = await get_all_users()
+    return SavedUsers(
+        users=data
+    )
 
 
 @router.post(
     "/competencies/{username}",
     response_model=AccountResume,
 )
-async def post_create_acc(username: str):
+async def get_comps(username: str):
     
     await extract_and_save_users()
     

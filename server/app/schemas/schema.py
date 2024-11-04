@@ -170,3 +170,6 @@ class Competency(BaseModel):
 class AccountResume(BaseModel):
     competencies: Dict[str, List[Competency]]
     resume: str
+
+class SavedUsers(BaseModel):
+    users: List[str]
