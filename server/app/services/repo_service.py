@@ -368,7 +368,7 @@ async def get_commit_activity(username, owner, repo, token):
         async def fetch_commit_details(commit):
             commit_sha = commit["sha"]
             commit_response = await client.get(f"{base_url}/{commit_sha}", headers=headers)
-            
+            print(commit_response)
             if commit_response.status_code != 200:
                 print("Ошибка:", commit_response.json().get("message", f"Failed to fetch details for commit {commit_sha}"))
                 return None
@@ -384,11 +384,12 @@ async def get_commit_activity(username, owner, repo, token):
 
         commit_stats_tasks = [fetch_commit_details(commit) for commit in commits]
         commit_stats = await asyncio.gather(*commit_stats_tasks)
-        
+        print(commit_stats)
     return [stat for stat in commit_stats if stat is not None]
 
 async def fetch_activity(username: str, owner: str, repo: str, token: str) -> ActivityList:
     data = await get_commit_activity(username, owner, repo, token)
+    data.reverse()
     dataInfo = [
         CommitInfo(
             additions=item['additions'],
