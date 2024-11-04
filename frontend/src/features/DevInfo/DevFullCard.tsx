@@ -105,7 +105,7 @@ export const DevFullCard = ({ username }: DevFullCardProps) => {
       <div className="DeveloperCV-ReposCarousel">
         <TagCarousel tags={data.repos} />
       </div>
-      <DevCharts username={username} repo={'Ten-Do/EBUS'} />
+      <DevCharts username={username} repo={data.repos[0]} />
     </div>
   );
 };

@@ -16,14 +16,6 @@ services:
     volumes:
       - mongo_data:/data/db  # Сохранение данных в volume
 
-  front:
-      build:
-        context: ./frontend
-        dockerfile: .dockerfile
-      restart: always
-      ports:
-        - "5173:5173"
-
 volumes:
   mongo_data:
   mongo_config:

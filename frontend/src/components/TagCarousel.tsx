@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Tag } from './Tag';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectRepos, setCurrRepo } from '../store/repos/slice';
 
 type TagCarouselProps = {
   tags: string[];
@@ -8,6 +10,11 @@ type TagCarouselProps = {
 export const TagCarousel: React.FC<TagCarouselProps> = ({ tags }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+
+  const currRepo = useSelector(selectRepos);
+
+  const activeRepo = currRepo || tags[0];
 
   useEffect(() => {
     const container = containerRef.current;
@@ -72,7 +79,10 @@ export const TagCarousel: React.FC<TagCarouselProps> = ({ tags }) => {
 
       <div ref={carouselRef} className="TagCarousel">
         {tags.map((tag, index) => (
-          <Tag key={index} view="default">
+          <Tag
+            key={index}
+            view={activeRepo === tag ? 'primary' : 'default'}
+            onClick={() => dispatch(setCurrRepo(tag))}>
             {tag}
           </Tag>
         ))}

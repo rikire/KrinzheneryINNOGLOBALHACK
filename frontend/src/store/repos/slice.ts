@@ -4,26 +4,26 @@ import type { RootState } from '../store';
 
 // Define a type for the slice state
 interface IReposState {
-  currentUser: string | null;
+  currRepo: string | null;
 }
 
 // Define the initial state using that type
 const initialState: IReposState = {
-  currentUser: null,
+  currRepo: null,
 };
 
 export const reposSlice = createSlice({
   name: 'repos',
   initialState,
   reducers: {
-    setCurrentUser: (state, action: PayloadAction<string>) => {
-      state.currentUser += action.payload;
+    setCurrRepo: (state, action: PayloadAction<string>) => {
+      state.currRepo = action.payload;
     },
   },
 });
 
-export const { setCurrentUser } = reposSlice.actions;
+export const { setCurrRepo } = reposSlice.actions;
 
-export const selectRepos = (state: RootState) => state.repos;
+export const selectRepos = (state: RootState) => state.repos.currRepo;
 
 export default reposSlice.reducer;

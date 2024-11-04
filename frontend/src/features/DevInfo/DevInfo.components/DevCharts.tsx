@@ -1,6 +1,8 @@
+import { useSelector } from 'react-redux';
 import { Chart } from '../../../components/Charts';
 import { useGetCommitActivityQuery } from '../../../store/backend/api';
 import { CommitInfo, RepoActivity } from '../../../types';
+import { selectRepos } from '../../../store/repos/slice';
 
 const option = {
   tooltip: {
@@ -46,10 +48,17 @@ const option = {
   ],
 };
 
-export const DevCharts = ({ username, repo }) => {
+export interface IDevChartsProps {
+  username: string;
+  repo: string;
+}
+
+export const DevCharts = ({ username, repo: repoDefault }: IDevChartsProps) => {
+  const repo = useSelector(selectRepos);
+  const currRepo = repo || repoDefault;
   const { data, isLoading, isError } = useGetCommitActivityQuery({
     username,
-    repo,
+    repo: currRepo,
   });
   if (isLoading) {
     return <div>Loading...</div>;

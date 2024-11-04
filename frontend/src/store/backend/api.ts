@@ -82,7 +82,7 @@ export const backendApi = createApi({
     // Получение активности по коммитам (динамика)
     getCommitActivity: builder.query<
       RepoActivity,
-      { username: string; repo: string; owner: string }
+      { username: string; repo: string }
     >({
       query: ({ username, repo }) => `/activity/${username}/${repo}`,
     }),
