@@ -203,7 +203,7 @@ async def post_add_favorite(querry: FavoriteQuerry):
     summary="Изменяет список любимчиков",
     description="Изменяет список любимчиков"
 )
-async def post_add_favorite(querry: FavoriteQuerry):
+async def post_add_favorite(querry: FavoriteListQuerry):
     return await update_favorites(querry)
 
 @router.post(
