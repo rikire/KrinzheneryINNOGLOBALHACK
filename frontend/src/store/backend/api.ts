@@ -8,6 +8,7 @@ import {
   AccountRegister,
   SearchResult,
   CommandRequest,
+  RepoActivity,
 } from '../../types'; // замените на путь к вашим типам
 
 export const backendApi = createApi({
@@ -78,6 +79,13 @@ export const backendApi = createApi({
     searchUsers: builder.query<SearchResult, { query: string }>({
       query: ({ query }) => `/search/${query}`,
     }),
+    // Получение активности по коммитам (динамика)
+    getCommitActivity: builder.query<
+      RepoActivity,
+      { username: string; repo: string; owner: string }
+    >({
+      query: ({ username, repo }) => `/activity/${username}/${repo}`,
+    }),
   }),
 });
 
@@ -92,4 +100,5 @@ export const {
   usePostCommandMutation,
   useDeleteCommandMutation,
   useSearchUsersQuery,
+  useGetCommitActivityQuery,
 } = backendApi;

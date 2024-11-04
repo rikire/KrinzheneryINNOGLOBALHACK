@@ -1,4 +1,6 @@
 import { Chart } from '../../../components/Charts';
+import { useGetCommitActivityQuery } from '../../../store/backend/api';
+import { CommitInfo, RepoActivity } from '../../../types';
 
 const option = {
   tooltip: {
@@ -44,90 +46,17 @@ const option = {
   ],
 };
 
-const candlesOptions = {
-  title: {
-    text: 'Динамика изменения кода в репозитории',
-  },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow',
-    },
-    formatter: function (params) {
-      let tar;
-      if (params[1] && params[1].value !== '-') {
-        tar = params[1];
-      } else {
-        tar = params[2];
-      }
-      return tar && tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
-    },
-  },
-  legend: {
-    data: ['Добавлено', 'Удалено'],
-    right: 0,
-  },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    containLabel: true,
-  },
-  xAxis: {
-    type: 'category',
-    data: (function () {
-      let list = [];
-      for (let i = 1; i <= 11; i++) {
-        list.push('Nov ' + i);
-      }
-      return list;
-    })(),
-  },
-  yAxis: {
-    type: 'value',
-  },
-  series: [
-    {
-      name: 'Placeholder',
-      type: 'bar',
-      stack: 'Total',
-      silent: true,
-      itemStyle: {
-        borderColor: 'transparent',
-        color: 'transparent',
-      },
-      emphasis: {
-        itemStyle: {
-          borderColor: 'transparent',
-          color: 'transparent',
-        },
-      },
-      data: [0, 900, 1245, 1530, 1376, 1376, 1511, 1689, 1856, 1495, 1292],
-    },
-    {
-      name: 'Добавлено',
-      type: 'bar',
-      stack: 'Total',
-      label: {
-        show: true,
-        position: 'top',
-      },
-      data: [900, 345, 393, '-', '-', 135, 178, 286, '-', '-', '-'],
-    },
-    {
-      name: 'Удалено',
-      type: 'bar',
-      stack: 'Total',
-      label: {
-        show: true,
-        position: 'bottom',
-      },
-      data: ['-', '-', '-', 108, 154, '-', '-', '-', 119, 361, 203],
-    },
-  ],
-};
-
-export const DevCharts = () => {
+export const DevCharts = ({ username, repo }) => {
+  const { data, isLoading, isError } = useGetCommitActivityQuery({
+    username,
+    repo,
+  });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError || !data) {
+    return <div>{username} Error</div>;
+  }
   return (
     <div className="">
       <div className="DeveloperCV-DoughnatCharts">
@@ -146,9 +75,108 @@ export const DevCharts = () => {
       </div>
       <div className="DeveloperCV-CandlesChart">
         <div className="DeveloperCV-Chart">
-          <Chart options={candlesOptions} />
+          <Chart options={getCandlesOptions(data)} />
         </div>
       </div>
     </div>
   );
 };
+
+const getCandlesOptions = (data: RepoActivity) => {
+  return {
+    title: {
+      text: 'Динамика изменения кода в репозитории',
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+      formatter: function (params) {
+        let tar;
+        if (params[1] && params[1].value !== '-') {
+          tar = params[1];
+        } else {
+          tar = params[2];
+        }
+        return tar && tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
+      },
+    },
+    legend: {
+      data: ['Добавлено', 'Удалено'],
+      right: 0,
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'category',
+      data: data.commits.map((commit) => commit.commit_date),
+    },
+    yAxis: {
+      type: 'value',
+    },
+    series: [
+      {
+        name: 'Placeholder',
+        type: 'bar',
+        stack: 'Total',
+        silent: true,
+        itemStyle: {
+          borderColor: 'transparent',
+          color: 'transparent',
+        },
+        emphasis: {
+          itemStyle: {
+            borderColor: 'transparent',
+            color: 'transparent',
+          },
+        },
+        // data: [0, 900, 1245, 1530, 1376, 1376, 1511, 1689, 1856, 1495, 1292],
+        data: getSums(data.commits),
+      },
+      {
+        name: 'Добавлено',
+        type: 'bar',
+        stack: 'Total',
+        label: {
+          show: true,
+          position: 'top',
+        },
+        data: data.commits.map((commit) =>
+          commit.additions - commit.deletions > 0
+            ? commit.additions - commit.deletions
+            : '-',
+        ),
+      },
+      {
+        name: 'Удалено',
+        type: 'bar',
+        stack: 'Total',
+        label: {
+          show: true,
+          position: 'bottom',
+        },
+        data: data.commits.map((commit) =>
+          commit.deletions - commit.additions > 0
+            ? commit.deletions - commit.additions
+            : '-',
+        ),
+      },
+    ],
+  };
+};
+
+function getSums(commits: CommitInfo[]) {
+  let currentSum = 0;
+  const result: number[] = [currentSum];
+  commits.forEach((commit) => {
+    currentSum += commit.additions - commit.deletions;
+    result.push(currentSum);
+  });
+
+  return result;
+}

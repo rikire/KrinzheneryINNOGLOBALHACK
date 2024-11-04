@@ -8,10 +8,10 @@ export const Auth = () => {
 
   if (!isShow) return null;
 
-  return createPortal(<LoginForm />, document.body);
+  return createPortal(<Form />, document.body);
 };
 
-const LoginForm = () => {
+const Form = () => {
   const [isRegister, setIsRegister] = useState(false);
   const dispatch = useDispatch();
 
@@ -37,7 +37,8 @@ const LoginForm = () => {
     // transform body to json
     const json = Object.fromEntries(body);
 
-    fetch('http://127.0.0.1:8000/' + (isRegister ? 'register' : 'login'), {
+    fetch('http://0.0.0.0:8000/' + (isRegister ? 'register' : 'login'), {
+      headers: { 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(json),
     })
@@ -56,55 +57,55 @@ const LoginForm = () => {
         close();
       }}>
       <form
-        className="LoginForm Card"
+        className="Form Card"
         onSubmit={formSubmitHandler}
         onClick={(e) => e.stopPropagation()}>
-        <button className="LoginForm-CloseButton" type="button" onClick={close}>
+        <button className="Form-CloseButton" type="button" onClick={close}>
           x
         </button>
-        <p className="LoginForm-Description">
+        <p className="Form-Description">
           Чтобы пользоваться всеми возможностями сайта, войдите в аккаунт или
           зарегистрируйтесь.
         </p>
         <input
-          className="LoginForm-Input"
+          className="Form-Input"
           type="text"
           name="login"
           placeholder="Логин"
         />
         <input
-          className="LoginForm-Input"
+          className="Form-Input"
           type="password"
           name="password"
           placeholder="Пароль"
         />
         {isRegister && (
           <input
-            className="LoginForm-Input"
+            className="Form-Input"
             type="password"
             name="password_repeat"
             placeholder="Повторите пароль "
           />
         )}
         {isRegister ? (
-          <button className="LoginForm-Button" type="submit">
+          <button className="Form-Button" type="submit">
             Зарегистрироваться
           </button>
         ) : (
-          <button className="LoginForm-Button" type="submit">
+          <button className="Form-Button" type="submit">
             Войти
           </button>
         )}
         {isRegister ? (
           <button
-            className="LoginForm-Button_secondary"
+            className="Form-Button_secondary"
             type="button"
             onClick={() => setIsRegister(false)}>
             Уже есть аккаунт
           </button>
         ) : (
           <button
-            className="LoginForm-Button_secondary"
+            className="Form-Button_secondary"
             type="button"
             onClick={() => setIsRegister(true)}>
             Зарегистрироваться
