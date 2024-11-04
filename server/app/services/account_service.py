@@ -10,6 +10,9 @@ async def create_acc(cred : AccountRegister) -> AccountInfo:
         command_list=[],
         favorites=[]
     )
+    old = await get_account(cred.login)
+    if old is not None:
+        return None
     acc = await create_account(acc)
     return AccountInfo(
         login=cred.login,
