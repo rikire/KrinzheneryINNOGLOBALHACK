@@ -1,7 +1,7 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, HTTPException
 from app.schemas.schema import (
     UserRepoStat, UserGlobalStat, UserInfo, SearchResult,
-    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList, CommandQuerry, FavoriteQuerry, FavoriteListQuerry
+    AccountRegister, AccountInfo, CommandInfo, SearchQuery, ActivityList, CommandQuerry, FavoriteQuerry, FavoriteListQuerry, AccountResume
 )
 from app.services.repo_service import (
     fetch_repo_stat, fetch_actualize_stat, fetch_global_stat, fetch_activity
@@ -17,7 +17,39 @@ from app.storage.crud.repo_stats import (
 from app.storage.crud.users import delete_user
 from app.config.config import get_token
 
+from app.storage.storage import is_collection_empty, extract_and_save_users, get_objects_by_username
+
 router = APIRouter()
+
+
+
+
+
+@router.post(
+    "/competencies/{username}",
+    response_model=AccountResume,
+)
+async def post_create_acc(username: str):
+    
+    await extract_and_save_users()
+    
+    user_data = await get_objects_by_username(username)
+
+    # Формируем ответ в нужном формате
+    if user_data:
+        competencies_data = {}
+        competencies = user_data[0].get('competencies', {})
+
+        # Преобразуем компетенции в нужный формат
+        for comp_name, comp_list in competencies.items():
+            competencies_data[comp_name] = [{"name": comp['name'], "score": comp['score']} for comp in comp_list]
+
+        resume = user_data[0].get('resume', '')
+
+        return AccountResume(competencies=competencies_data, resume=resume)
+    else:
+        raise HTTPException(status_code=404, detail="Пользователь не найден.")
+
 
 
 @router.get(

@@ -162,3 +162,11 @@ class FavoriteQuerry(BaseModel):
 class FavoriteListQuerry(BaseModel):
     login: str = Field(..., description="Логин")
     favorites :List[str] = Field(..., description="Избранные разработчики")
+
+class Competency(BaseModel):
+    name: str
+    score: int
+
+class AccountResume(BaseModel):
+    competencies: Dict[str, List[Competency]]
+    resume: str
