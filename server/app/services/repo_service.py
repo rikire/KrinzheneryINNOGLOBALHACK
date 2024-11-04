@@ -393,7 +393,7 @@ async def fetch_activity(username: str, owner: str, repo: str, token: str) -> Ac
         CommitInfo(
             additions=item['additions'],
             deletions=item['deletions'],
-            commit_date=datetime.strptime(item['commit_date'], "%Y-%m-%dT%H:%M:%S%z"),
+            commit_date=datetime.datetime.strptime(item['commit_date'], "%Y-%m-%dT%H:%M:%S%z"),
             commit_message=item['commit_message']
         )
         for item in data
