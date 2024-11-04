@@ -238,7 +238,7 @@ async def post_command(querry: CommandQuerry):
     CommandInfo
         Информация о добавленной команде.
     """
-    return await update_commands(querry.login, querry.command)
+    return await update_commands(querry)
 
 
 @router.post(
