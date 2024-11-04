@@ -17,7 +17,7 @@ from app.storage.crud.repo_stats import (
 from app.storage.crud.users import delete_user
 from app.config.config import get_token
 
-from app.storage.storage import is_collection_empty, extract_and_save_users, get_objects_by_username, get_all_users
+from app.storage.storage import is_collection_empty, extract_and_save_users, get_objects_by_username, get_all_users, get_usernames_by_competency
 
 router = APIRouter()
 
@@ -270,7 +270,7 @@ async def post_add_favorite(querry: FavoriteQuerry):
 
 @router.post(
     "/search",
-    response_model=SearchResult,
+    response_model=SavedUsers,
     summary="Поиск пользователей по компетенциям",
     description="Ищет пользователей на основе заданных компетенций и возвращает список профилей."
 )
@@ -288,8 +288,12 @@ async def get_search(search_query: SearchQuery):
     SearchResult
         Список найденных пользователей, соответствующих запросу.
     """
+    await extract_and_save_users()
     query = search_query.query
-    return await fetch_search(query, token=get_token())
+    users = await get_usernames_by_competency(query)
+    return SavedUsers(
+        users=users
+    )
 
 @router.get(
     "/activity/{username}/{owner}/{repo}",
