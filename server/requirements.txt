@@ -9,3 +9,4 @@ motor
 uvicorn
 pymongo
 GitPython
+requests
